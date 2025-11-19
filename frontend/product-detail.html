@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - V-!magine</title>
+    <link rel="stylesheet" href="styles.css?v=2024120807">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .product-detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+            background: #f8f9fa;
+        }
+
+        /* Hero Section with Product Title */
+        .product-hero {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            margin-top: -1rem;
+        }
+
+        .product-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.2;
+        }
+
+        .product-hero-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb-section {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .breadcrumb-section a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.7;
+        }
+
+        .breadcrumb-section a:hover {
+            opacity: 1;
+        }
+
+        .breadcrumb-arrow {
+            opacity: 0.5;
+        }
+
+        .product-info-right {
+            flex: 1;
+            text-align: right;
+            max-width: 100%;
+        }
+
+        .product-hero h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            line-height: 1.3;
+            text-align: right;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .product-hero .product-subtitle {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-bottom: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 400;
+            text-align: right;
+        }
+
+
+
+        /* Mobile responsive for hero section */
+        @media (max-width: 768px) {
+            .product-hero {
+                padding: 0.6rem 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .product-hero-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+
+            .product-info-right {
+                max-width: 100%;
+                text-align: left;
+            }
+
+            .product-hero h1 {
+                font-size: 1.1rem;
+                text-align: left;
+            }
+
+            .product-hero .product-subtitle {
+                text-align: left;
+                font-size: 0.7rem;
+            }
+
+
+
+            .breadcrumb-section {
+                order: -1;
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Standard E-commerce Layout */
+        .product-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        /* Left Side - Product Images */
+        .product-image-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .main-image-container {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 1rem;
+        }
+
+        .thumbnail-images {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .thumbnail-image {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 0.5rem;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .thumbnail-image.active,
+        .thumbnail-image:hover {
+            border-color: var(--primary-color);
+        }
+
+        /* Left Side Action Buttons */
+        .left-side-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+
+        .btn-add-to-cart-left {
+            background: #232f3e;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .btn-add-to-cart-left:hover {
+            background: #1a252f;
+        }
+
+        .btn-buy-now-left {
+            background: #ff9900;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .btn-buy-now-left:hover {
+            background: #e68900;
+        }
+
+        /* Right Side - Product Info */
+        .product-info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .large-product-image {
+            width: 100%;
+            height: 350px;
+            object-fit: contain;
+            border-radius: 15px;
+            background: white;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .large-product-image:hover {
+            transform: scale(1.02);
+        }
+
+        .large-image-label {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .large-image-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .image-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .product-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1.5rem;
+        }
+
+        .product-category {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--light-color), #f6b17a);
+            color: var(--primary-color);
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(246, 177, 122, 0.3);
+        }
+
+        /* Product Info Styling */
+        .product-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .product-brand {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .rating-stars {
+            color: #ffa500;
+            font-size: 1rem;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .product-price-section {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin: 1.5rem 0 0.5rem 0;
+        }
+
+        .current-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #B12704;
+        }
+
+        .original-price {
+            font-size: 1rem;
+            color: #666;
+            text-decoration: line-through;
+        }
+
+        .discount {
+            background: #B12704;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .price-note {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .price-badge {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .rating-stars {
+            color: #ffc107;
+            font-size: 1.2rem;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .product-description-container {
+            margin: 2rem 0;
+        }
+
+        .product-description {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1.8rem;
+            border-radius: 15px;
+            border-left: 5px solid var(--primary-color);
+            margin: 0;
+            font-size: 1.2rem;
+            line-height: 1.7;
+            color: #444;
+            display: block;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        .description-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .description-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .product-features {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .features-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .features-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .features-list li:last-child {
+            border-bottom: none;
+        }
+
+        .features-list li i {
+            color: var(--primary-color);
+            width: 16px;
+        }
+
+        .product-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .meta-item {
+            text-align: center;
+        }
+
+        .meta-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .meta-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .rating-stars {
+            color: #ffc107;
+            font-size: 1.2rem;
+        }
+
+        .stock-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .in-stock {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .low-stock {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .out-of-stock {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Key Features */
+        .key-features {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            background: #f9f9f9;
+        }
+
+        .key-features h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .key-features ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .key-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .key-features i {
+            color: #28a745;
+            font-size: 0.8rem;
+        }
+
+        /* Stock Info */
+        .stock-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .stock-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #28a745;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .delivery-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Action Buttons */
+        .product-actions {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .btn-add-to-cart {
+            flex: 1;
+            background: #ff9900;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-add-to-cart:hover {
+            background: #e68900;
+        }
+
+        .btn-buy-now {
+            flex: 1;
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-buy-now:hover {
+            background: #e55a2b;
+        }
+
+        /* Additional Info */
+        .additional-info {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .info-item i {
+            color: var(--primary-color);
+        }
+
+        /* Product Details Tabs */
+        .product-details-tabs {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .tab-headers {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab-header {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.2s;
+        }
+
+        .tab-header.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            background: #f8f9fa;
+        }
+
+        .tab-header:hover {
+            background: #f8f9fa;
+        }
+
+        .tab-content {
+            padding: 2rem;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .tab-pane h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .specs-table {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .spec-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .spec-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .spec-value {
+            color: #666;
+        }
+
+        .reviews-summary {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avg-rating {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .total-reviews {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .btn-add-to-cart {
+            background: #000000;
+            color: #FFFFFF;
+            border: 2px solid #000000;
+            padding: 16px 24px;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            transition: all 0.3s ease;
+            flex: 1;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-add-to-cart:hover {
+            background: #FFFFFF;
+            color: #000000;
+            border-color: #000000;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-add-to-cart:disabled {
+            background-color: #cccccc;
+            color: #666666;
+            border-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .breadcrumb {
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #666;
+            margin: 0 0.5rem;
+        }
+
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 3rem;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-container i {
+            font-size: 3rem;
+            color: #dc3545;
+            margin-bottom: 1rem;
+        }
+
+        .error-container h2 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .error-container p {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        /* Related Products */
+        .related-products {
+            margin-top: 4rem;
+            padding: 3rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .related-products-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .related-products h2 {
+            color: var(--text-color);
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .related-products-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Pinterest-style layout for related products */
+        .related-products-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem 0;
+        }
+
+        /* Random attractive product cards */
+        .related-product-card {
+            background: none;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            margin: 0;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* Random sizing for attractive layout */
+        .related-product-card:nth-child(3n+1) {
+            width: 280px;
+            transform: rotate(-2deg);
+        }
+
+        .related-product-card:nth-child(3n+2) {
+            width: 320px;
+            transform: rotate(1deg);
+        }
+
+        .related-product-card:nth-child(3n+3) {
+            width: 300px;
+            transform: rotate(-1deg);
+        }
+
+        .related-product-card:nth-child(4n+1) {
+            margin-top: 2rem;
+        }
+
+        .related-product-card:nth-child(4n+3) {
+            margin-top: -1rem;
+        }
+
+        .related-product-card:hover {
+            transform: scale(1.05) rotate(0deg) !important;
+            z-index: 10;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .related-product-image {
+            width: 100%;
+            height: auto;
+            min-height: 250px;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin-bottom: 0;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .related-product-card:hover .related-product-image {
+            transform: scale(1.02);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Floating product info overlay */
+        .related-product-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 2rem 1.5rem 1.5rem;
+            border-radius: 0 0 20px 20px;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .related-product-card:hover .related-product-info {
+            transform: translateY(0);
+        }
+
+        .related-product-category {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            align-self: flex-start;
+            backdrop-filter: blur(10px);
+        }
+
+        .related-product-card h4 {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .related-product-price {
+            color: #F6B17A;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .related-product-actions {
+            display: flex;
+            justify-content: center;
+        }
+
+        .related-add-to-cart {
+            background: rgba(255, 255, 255, 0.95);
+            color: #2D3250;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            margin-top: 1rem;
+        }
+
+        .related-add-to-cart:hover {
+            background: #2D3250;
+            color: white;
+            border-color: #2D3250;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 50, 80, 0.3);
+        }
+
+        @media (max-width: 1024px) {
+            .product-detail {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .large-product-image {
+                height: 300px;
+            }
+
+            .product-images-vertical-display {
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .product-detail-container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .product-detail {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .product-images-vertical-display {
+                gap: 1.5rem;
+            }
+
+            .large-product-image {
+                height: 280px;
+            }
+
+            .large-image-label {
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .product-title {
+                font-size: 2rem;
+            }
+
+            .product-price {
+                font-size: 2.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .product-description,
+            .product-features {
+                padding: 1.5rem;
+            }
+
+            .description-title,
+            .features-title {
+                font-size: 1.1rem;
+            }
+
+            .related-products {
+                margin-top: 2rem;
+                padding: 2rem 1.5rem;
+            }
+
+            .related-products h2 {
+                font-size: 2rem;
+            }
+
+            .related-products-grid {
+                flex-direction: column;
+                align-items: center;
+                gap: 2rem;
+            }
+
+            .related-product-card:nth-child(3n+1),
+            .related-product-card:nth-child(3n+2),
+            .related-product-card:nth-child(3n+3) {
+                width: 90%;
+                max-width: 350px;
+                transform: rotate(0deg);
+            }
+
+            .related-product-card:nth-child(4n+1),
+            .related-product-card:nth-child(4n+3) {
+                margin-top: 0;
+            }
+
+            .related-product-image {
+                min-height: 200px;
+                max-height: 300px;
+            }
+
+            .related-product-info {
+                transform: translateY(0);
+                background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-detail {
+                padding: 1.5rem 1rem;
+            }
+
+            .product-images-vertical-display {
+                gap: 1rem;
+            }
+
+            .large-product-image {
+                height: 250px;
+                padding: 1rem;
+            }
+
+            .large-image-label {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.7rem;
+            }
+
+            .product-title {
+                font-size: 1.8rem;
+            }
+
+            .product-price {
+                font-size: 2.2rem;
+            }
+
+            .related-products-grid {
+                flex-direction: column;
+                align-items: center;
+                gap: 1.5rem;
+            }
+
+            .related-product-card:nth-child(3n+1),
+            .related-product-card:nth-child(3n+2),
+            .related-product-card:nth-child(3n+3) {
+                width: 95%;
+                transform: rotate(0deg);
+            }
+
+            .related-product-image {
+                min-height: 180px;
+                max-height: 250px;
+            }
+
+            .related-product-info {
+                padding: 1.5rem 1rem 1rem;
+                transform: translateY(0);
+            }
+
+            .related-product-card h4 {
+                font-size: 1rem;
+            }
+
+            .related-product-price {
+                font-size: 1.1rem;
+            }
+
+            .related-products {
+                padding: 1.5rem 1rem;
+            }
+
+            .related-products h2 {
+                font-size: 1.8rem;
+            }
+
+            .feature-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem 1rem;
+            }
+
+            .feature-section.reverse .feature-content,
+            .feature-section.reverse .feature-image {
+                order: unset;
+            }
+
+            .feature-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .feature-icons-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 2rem 1rem;
+            }
+
+            .feature-icon-item {
+                padding: 1.5rem;
+            }
+
+            .product-main {
+                grid-template-columns: 1fr;
+            }
+
+            .product-hero h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Feature Sections */
+        .feature-sections {
+            background: #f8f9fa;
+        }
+
+        .feature-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: center;
+        }
+
+        .feature-section.reverse {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .feature-section.reverse .feature-content {
+            order: 2;
+        }
+
+        .feature-section.reverse .feature-image {
+            order: 1;
+        }
+
+        .feature-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-content p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #666;
+        }
+
+        .feature-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Feature Icons Grid */
+        .feature-icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+        }
+
+        .feature-icon-item {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 12px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .feature-icon-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .feature-icon-item h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .feature-icon-item p {
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1><a href="index.html">V-!magine</a></h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <div class="dropdown">
+                <a href="#" class="dropbtn">Categories <i class="fas fa-chevron-down"></i></a>
+                <div class="dropdown-content">
+                    <a href="category.html?category=Laptops">Laptops</a>
+                    <a href="category.html?category=Smartphones">Smartphones</a>
+                    <a href="category.html?category=Audio">Audio</a>
+                    <a href="category.html?category=Accessories">Accessories</a>
+                    <a href="category.html?category=Gaming">Gaming</a>
+                </div>
+            </div>
+            <a href="index.html#deals">Deals</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div class="nav-actions">
+            <div class="search-bar">
+                <input type="text" placeholder="Search products..." autocomplete="off">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div class="user-info">
+                <!-- Guest state -->
+                <div class="guest-actions" id="guest-actions">
+                    <a href="auth.html" title="Login / Sign Up" aria-label="Login or Sign Up"><i class="fas fa-user"></i></a>
+                </div>
+                <!-- Logged in state -->
+                <div class="user-profile" id="user-profile" style="display: none;">
+                    <span class="user-name"></span>
+                    <div class="user-dropdown">
+                        <a href="profile.html">Profile</a>
+                        <a href="#" id="logout-link">Logout</a>
+                    </div>
+                </div>
+            </div>
+            <div class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="product-detail-container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="index.html">Home</a>
+            <span>/</span>
+            <span id="breadcrumb-category">Products</span>
+            <span>/</span>
+            <span id="breadcrumb-product">Product Details</span>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-container" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Loading product details...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-container" class="error-container" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>Product Not Found</h2>
+            <p>Sorry, we couldn't find the product you're looking for.</p>
+            <button onclick="window.history.back()" class="btn-primary">Go Back</button>
+        </div>
+
+        <!-- Product Detail -->
+        <div id="product-detail" class="product-detail" style="display: none;">
+            <!-- Product will be loaded here -->
+        </div>
+
+        <!-- Related Products -->
+        <section id="related-products" class="related-products" style="display: none;">
+            <div class="related-products-header">
+                <h2>Related Products</h2>
+                <p class="related-products-subtitle">Discover more products you might like based on your current selection</p>
+            </div>
+            <div class="related-products-grid" id="related-products-grid">
+                <!-- Related products will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar">
+        <div class="cart-header">
+            <h3>Shopping Cart</h3>
+            <button class="close-cart">&times;</button>
+        </div>
+        <div class="cart-items">
+            <!-- Cart items will be populated here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <strong>Total: $<span id="cart-total-amount">0.00</span></strong>
+            </div>
+            <button class="checkout-btn">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Get product ID from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        // Load product details when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            if (productId) {
+                loadProductDetails(productId);
+            } else {
+                showError();
+            }
+        });
+
+        // Load product details function
+        async function loadProductDetails(id) {
+            try {
+                const response = await fetch(`http://localhost:4001/api/products/product/${id}`);
+
+                if (!response.ok) {
+                    throw new Error('Product not found');
+                }
+
+                const product = await response.json();
+                displayProductDetails(product);
+                loadRelatedProducts(product.category);
+            } catch (error) {
+                console.error('Error loading product:', error);
+                showError();
+            }
+        }
+
+        // Display product details
+        function displayProductDetails(product) {
+            const loadingContainer = document.getElementById('loading-container');
+            const productDetailContainer = document.getElementById('product-detail');
+
+            // Hide loading, show product
+            loadingContainer.style.display = 'none';
+            productDetailContainer.style.display = 'block';
+
+            // Update breadcrumb
+            document.getElementById('breadcrumb-category').textContent = product.category || 'Products';
+            document.getElementById('breadcrumb-product').textContent = product.productname || product.name;
+
+            // Update page title
+            document.title = `${product.productname || product.name} - V-!magine`;
+
+            // Use images from database or generate fallback images
+            const productImages = product.images && product.images.length > 0
+                ? product.images
+                : generateProductImages(product.imageUrl || product.image);
+
+            // Image labels for better UX
+            const imageLabels = ['Main View', 'Side View', 'Detail', 'Package'];
+
+            // Generate product features
+            const features = generateProductFeatures(product);
+
+            // Render product details with standard e-commerce layout
+            productDetailContainer.innerHTML = `
+                <!-- Standard E-commerce Product Layout -->
+                <div class="product-main">
+                    <!-- Left Side - Product Images -->
+                    <div class="product-image-section">
+                        <div class="main-image-container">
+                            <img src="${productImages[0]}" alt="${product.productname || product.name}" class="main-product-image" id="main-image">
+                        </div>
+                        <div class="thumbnail-images">
+                            ${productImages.slice(0, 3).map((image, index) => `
+                                <img src="${image}" alt="Product view ${index + 1}" class="thumbnail-image ${index === 0 ? 'active' : ''}" onclick="changeMainImage('${image}', this)">
+                            `).join('')}
+                        </div>
+
+                        <!-- Action Buttons Below Thumbnails -->
+                        <div class="left-side-actions">
+                            <button class="btn-add-to-cart-left" onclick="addToCartFromDetail('${product._id || product.id}', this)" ${product.stockQuantity <= 0 ? 'disabled' : ''}>
+                                <i class="fas fa-shopping-cart"></i>
+                                ${product.stockQuantity <= 0 ? 'Out of Stock' : 'ADD TO CART'}
+                            </button>
+                            <button class="btn-buy-now-left">
+                                <i class="fas fa-bolt"></i>
+                                Buy Now
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Side - Product Information -->
+                    <div class="product-info-section">
+                        <!-- Product Title -->
+                        <h1 class="product-title">${product.productname || product.name}</h1>
+
+                        <!-- Brand/Category -->
+                        <div class="product-brand">${getBrandFromName(product.productname || product.name)} | ${product.category || 'Electronics'}</div>
+
+                        <!-- Rating -->
+                        <div class="product-rating">
+                            <div class="rating-stars">
+                                ${generateStars(product.rating || 4.2)}
+                            </div>
+                            <span class="rating-text">(${Math.floor(Math.random() * 500) + 100} reviews)</span>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="product-price-section">
+                            <span class="current-price">₹${(product.price * 83).toFixed(0)}</span>
+                            <span class="original-price">₹${((product.price * 83) * 1.2).toFixed(0)}</span>
+                            <span class="discount">17% off</span>
+                        </div>
+                        <div class="price-note">Inclusive of all taxes</div>
+
+                        <!-- Key Features -->
+                        <div class="key-features">
+                            <h3>Key Features:</h3>
+                            <ul>
+                                ${generateProductFeatures(product).slice(0, 4).map(feature => `
+                                    <li><i class="fas fa-check"></i> ${feature}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+
+                        <!-- Stock Status -->
+                        <div class="stock-info">
+                            <span class="stock-status in-stock">
+                                <i class="fas fa-check-circle"></i> In Stock
+                            </span>
+                            <span class="delivery-info">Free delivery by tomorrow</span>
+                        </div>
+
+
+
+                        <!-- Additional Info -->
+                        <div class="additional-info">
+                            <div class="info-item">
+                                <i class="fas fa-truck"></i>
+                                <span>Free Delivery</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-undo"></i>
+                                <span>7 Days Return</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>1 Year Warranty</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Description Tabs -->
+                <div class="product-details-tabs">
+                    <div class="tab-headers">
+                        <button class="tab-header active" onclick="showTab('description')">Description</button>
+                        <button class="tab-header" onclick="showTab('specifications')">Specifications</button>
+                        <button class="tab-header" onclick="showTab('reviews')">Reviews</button>
+                    </div>
+
+                    <div class="tab-content">
+                        <div id="description-tab" class="tab-pane active">
+                            <h3>Product Description</h3>
+                            <p>${getEnhancedDescription(product)}</p>
+                        </div>
+
+                        <div id="specifications-tab" class="tab-pane">
+                            <h3>Specifications</h3>
+                            <div class="specs-table">
+                                ${generateProductFeatures(product).map(feature => `
+                                    <div class="spec-row">
+                                        <span class="spec-label">${feature.split(' ')[0]}:</span>
+                                        <span class="spec-value">${feature}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div id="reviews-tab" class="tab-pane">
+                            <h3>Customer Reviews</h3>
+                            <div class="reviews-summary">
+                                <div class="rating-overview">
+                                    <span class="avg-rating">${product.rating || '4.2'}</span>
+                                    <div class="rating-stars">${generateStars(product.rating || 4.2)}</div>
+                                    <span class="total-reviews">${Math.floor(Math.random() * 500) + 100} reviews</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Showcase Section -->
+                <div class="product-showcase-section">
+                    <!-- Left Side - Images -->
+                    <div class="product-images-column">
+                        <div class="product-showcase-gallery">
+                            ${productImages.map((image, index) => `
+                                <div class="showcase-image-container">
+                                    <img src="${image}" alt="Product Image ${index + 1}" class="showcase-image">
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Right Side - Description -->
+                    <div class="product-description-column">
+                        <div class="product-description-content">
+                            <h2>Product Features</h2>
+                            <div class="description-text">
+                                <p><strong>Advanced Technology:</strong> ${getEnhancedDescription(product)}</p>
+
+                                <h3>Key Specifications</h3>
+                                <ul class="specs-list">
+                                    ${generateProductFeatures(product).map(feature => `
+                                        <li><i class="fas fa-check-circle"></i> ${feature}</li>
+                                    `).join('')}
+                                </ul>
+
+                                <h3>What's Included</h3>
+                                <ul class="included-items">
+                                    <li><i class="fas fa-box"></i> ${product.productname || product.name}</li>
+                                    <li><i class="fas fa-book"></i> User Manual</li>
+                                    <li><i class="fas fa-shield-alt"></i> Warranty Card</li>
+                                    <li><i class="fas fa-plug"></i> Power Adapter (if applicable)</li>
+                                </ul>
+
+                                <div class="product-highlights">
+                                    <h3>Why Choose This Product?</h3>
+                                    <div class="highlight-grid">
+                                        <div class="highlight-item">
+                                            <i class="fas fa-star"></i>
+                                            <span>Premium Quality</span>
+                                        </div>
+                                        <div class="highlight-item">
+                                            <i class="fas fa-shipping-fast"></i>
+                                            <span>Fast Delivery</span>
+                                        </div>
+                                        <div class="highlight-item">
+                                            <i class="fas fa-undo"></i>
+                                            <span>Easy Returns</span>
+                                        </div>
+                                        <div class="highlight-item">
+                                            <i class="fas fa-headset"></i>
+                                            <span>24/7 Support</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Built for Connection Section -->
+                <div class="connection-text-section">
+                    <h2>Built for connection</h2>
+                    <p>Stay connected with advanced technology that brings people together. Whether for work, entertainment, or communication, this product delivers crystal-clear performance and seamless integration with your digital lifestyle.</p>
+                </div>
+            `;
+        }
+
+        // Show error state
+        function showError() {
+            const loadingContainer = document.getElementById('loading-container');
+            const errorContainer = document.getElementById('error-container');
+
+            loadingContainer.style.display = 'none';
+            errorContainer.style.display = 'block';
+        }
+
+        // Generate star rating
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star"></i>';
+            }
+
+            return stars;
+        }
+
+        // Get stock status class
+        function getStockClass(stock) {
+            if (stock <= 0) return 'out-of-stock';
+            if (stock <= 5) return 'low-stock';
+            return 'in-stock';
+        }
+
+        // Get stock status text
+        function getStockText(stock) {
+            if (stock <= 0) return 'Out of Stock';
+            if (stock <= 5) return `Low Stock (${stock} left)`;
+            return `In Stock (${stock} available)`;
+        }
+
+        // Add to cart from detail page
+        function addToCartFromDetail(productId, buttonElement = null) {
+            // Use the existing addToCart function from script.js
+            if (typeof addToCart === 'function') {
+                addToCart(productId, buttonElement);
+            } else {
+                console.error('addToCart function not available');
+            }
+        }
+
+        // Generate multiple product images (simulate different angles)
+        function generateProductImages(mainImage) {
+            // If we have a real image URL, try to create variations
+            if (mainImage && mainImage.includes('unsplash.com')) {
+                const baseUrl = mainImage.split('?')[0];
+                return [
+                    `${baseUrl}?w=600&h=600&fit=crop&crop=center`, // Main view
+                    `${baseUrl}?w=600&h=600&fit=crop&crop=left`,   // Side view
+                    `${baseUrl}?w=600&h=600&fit=crop&crop=top`,    // Detail view
+                    `${baseUrl}?w=600&h=600&fit=crop&crop=right`   // Package view
+                ];
+            }
+
+            // For other images or fallback, use the same image
+            return [
+                mainImage,
+                mainImage,
+                mainImage,
+                mainImage
+            ];
+        }
+
+        // Large images are displayed directly, no need for image switching function
+
+        // Generate product features based on category
+        function generateProductFeatures(product) {
+            const category = (product.category || '').toLowerCase();
+            const baseFeatures = [
+                'High-quality construction',
+                'Excellent performance',
+                'Great value for money',
+                'Reliable and durable'
+            ];
+
+            const categoryFeatures = {
+                'laptops': [
+                    'Latest processor technology',
+                    'High-resolution display',
+                    'Long battery life',
+                    'Fast SSD storage',
+                    'Multiple connectivity options'
+                ],
+                'smartphones': [
+                    'Advanced camera system',
+                    'Fast charging capability',
+                    'Premium build quality',
+                    'Latest operating system',
+                    'Water and dust resistant'
+                ],
+                'audio': [
+                    'Superior sound quality',
+                    'Noise cancellation technology',
+                    'Comfortable fit',
+                    'Wireless connectivity',
+                    'Long playback time'
+                ],
+                'gaming': [
+                    'High-performance graphics',
+                    'Ultra-fast response time',
+                    'Immersive gaming experience',
+                    'Advanced cooling system',
+                    'Customizable settings'
+                ],
+                'accessories': [
+                    'Universal compatibility',
+                    'Compact and portable design',
+                    'Easy to use',
+                    'Durable materials',
+                    'Stylish appearance'
+                ]
+            };
+
+            return categoryFeatures[category] || baseFeatures;
+        }
+
+        // Get enhanced description
+        function getEnhancedDescription(product) {
+            const originalDesc = product.description || '';
+            const category = (product.category || '').toLowerCase();
+
+            if (originalDesc && originalDesc.length > 50) {
+                return originalDesc;
+            }
+
+            // Generate enhanced description based on category
+            const enhancedDescriptions = {
+                'laptops': `Experience cutting-edge performance with this premium laptop. Featuring the latest processor technology and high-speed memory, it delivers exceptional performance for work, entertainment, and everything in between. The sleek design combines portability with power, making it perfect for professionals and students alike.`,
+
+                'smartphones': `Discover the perfect blend of innovation and style with this advanced smartphone. Equipped with a powerful processor, stunning display, and professional-grade camera system, it captures life's moments in incredible detail. Stay connected, productive, and entertained with this feature-rich device.`,
+
+                'audio': `Immerse yourself in superior sound quality with these premium audio products. Engineered with advanced acoustic technology, they deliver crystal-clear audio with deep bass and crisp highs. Whether for music, calls, or entertainment, experience audio like never before.`,
+
+                'gaming': `Elevate your gaming experience with this high-performance gaming equipment. Designed for serious gamers, it features cutting-edge technology that delivers smooth, responsive gameplay. Dominate the competition with professional-grade performance and reliability.`,
+
+                'accessories': `Enhance your digital lifestyle with this essential accessory. Crafted with premium materials and thoughtful design, it provides the perfect combination of functionality and style. Compatible with a wide range of devices for maximum versatility.`
+            };
+
+            return enhancedDescriptions[category] || `${product.productname || product.name} offers exceptional quality and performance. This carefully crafted product combines innovative design with reliable functionality, making it an excellent choice for discerning customers who value both style and substance.`;
+        }
+
+        // Extract brand from product name
+        function getBrandFromName(productName) {
+            const commonBrands = ['Apple', 'Samsung', 'Sony', 'LG', 'HP', 'Dell', 'Lenovo', 'Asus', 'Acer', 'Microsoft', 'Google', 'OnePlus', 'Xiaomi', 'Huawei', 'Nintendo', 'PlayStation', 'Xbox'];
+
+            for (const brand of commonBrands) {
+                if (productName.toLowerCase().includes(brand.toLowerCase())) {
+                    return brand;
+                }
+            }
+
+            // If no brand found, extract first word as potential brand
+            const firstWord = productName.split(' ')[0];
+            return firstWord.charAt(0).toUpperCase() + firstWord.slice(1).toLowerCase();
+        }
+
+        // Load related products
+        async function loadRelatedProducts(category) {
+            if (!category) return;
+
+            try {
+                const response = await fetch(`http://localhost:4001/api/products/category/${category}`);
+
+                if (!response.ok) {
+                    console.log('No related products found');
+                    return;
+                }
+
+                const data = await response.json();
+                const relatedProducts = data.products || [];
+
+                // Filter out current product and limit to 4 products
+                const filteredProducts = relatedProducts
+                    .filter(product => product._id !== productId)
+                    .slice(0, 4);
+
+                if (filteredProducts.length > 0) {
+                    displayRelatedProducts(filteredProducts);
+                }
+            } catch (error) {
+                console.error('Error loading related products:', error);
+            }
+        }
+
+        // Display related products with Pinterest-style layout
+        function displayRelatedProducts(products) {
+            const relatedSection = document.getElementById('related-products');
+            const relatedGrid = document.getElementById('related-products-grid');
+
+            relatedGrid.innerHTML = products.map(product => `
+                <div class="related-product-card" onclick="window.location.href='product-detail.html?id=${product._id}'">
+                    <img src="${product.imageUrl}" alt="${product.productname}" class="related-product-image">
+                    <div class="related-product-info">
+                        <div class="related-product-category">${product.category || 'Product'}</div>
+                        <h4>${product.productname}</h4>
+                        <div class="related-product-price">₹${(product.price * 83).toFixed(0)}</div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            ${product.rating || '4.2'} (${Math.floor(Math.random() * 300) + 50} reviews)
+                        </div>
+                        <div class="related-product-actions">
+                            <button class="related-add-to-cart" onclick="event.stopPropagation(); addToCartFromDetail('${product._id}', this)" title="Add to Cart">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Add to Cart</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            relatedSection.style.display = 'block';
+        }
+
+        // Image switching functionality
+        function changeMainImage(imageSrc, thumbnailElement) {
+            const mainImage = document.getElementById('main-image');
+            mainImage.src = imageSrc;
+
+            // Update active thumbnail
+            document.querySelectorAll('.thumbnail-image').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            thumbnailElement.classList.add('active');
+        }
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tab panes
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+
+            // Remove active class from all tab headers
+            document.querySelectorAll('.tab-header').forEach(header => {
+                header.classList.remove('active');
+            });
+
+            // Show selected tab pane
+            document.getElementById(tabName + '-tab').classList.add('active');
+
+            // Add active class to clicked tab header
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

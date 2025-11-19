@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - V-!magine</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Cinematic Animations */
+        @keyframes cinematic-sweep {
+            0% {
+                transform: translateX(-100%) skewX(-20deg);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(100%) skewX(-20deg);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes text-glow {
+            0%, 100% {
+                text-shadow: 0 0 30px rgba(45, 50, 80, 0.8),
+                            0 0 60px rgba(45, 50, 80, 0.6),
+                            0 0 90px rgba(45, 50, 80, 0.4);
+            }
+            50% {
+                text-shadow: 0 0 40px rgba(45, 50, 80, 0.9),
+                            0 0 80px rgba(45, 50, 80, 0.7),
+                            0 0 120px rgba(45, 50, 80, 0.5);
+            }
+        }
+
+        @keyframes cinematic-bg {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Hero Section Styles */
+        .about-hero {
+            position: relative;
+            min-height: 100vh;
+            background: linear-gradient(135deg, 
+                #1a1f35 0%,
+                #2D3250 50%,
+                #1a1f35 100%);
+            background-size: 200% 200%;
+            animation: cinematic-bg 15s ease infinite;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Light beam effect */
+        .light-beam {
+            position: absolute;
+            width: 200%;
+            height: 200px;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 45%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.1) 55%,
+                transparent 100%);
+            transform: rotate(-45deg);
+            pointer-events: none;
+        }
+
+        .beam-1 { top: -100px; animation: cinematic-sweep 8s linear infinite; }
+        .beam-2 { top: 30%; animation: cinematic-sweep 12s linear infinite 4s; }
+        .beam-3 { bottom: -100px; animation: cinematic-sweep 10s linear infinite 2s; }
+
+        /* Content wrapper */
+        .cinematic-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px;
+            background: rgba(45, 50, 80, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: perspective(1000px) rotateX(0deg);
+            transition: transform 0.5s ease;
+        }
+
+        .cinematic-content:hover {
+            transform: perspective(1000px) rotateX(2deg);
+        }
+
+        /* Text styles */
+        .about-hero h1 {
+            color: white;
+            font-size: 4em;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            animation: text-glow 3s ease-in-out infinite;
+            text-transform: uppercase;
+        }
+
+        .about-hero p {
+            color: #fff;
+            font-size: 1.5em;
+            opacity: 0.9;
+            margin-top: 20px;
+            letter-spacing: 1px;
+        }
+
+        /* Particle effect */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float-up 15s linear infinite;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Generate multiple particles with different positions and delays */
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 6s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 8s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 10s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 12s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 14s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 16s; }
+        .particle:nth-child(10) { left: 95%; animation-delay: 18s; }
+
+        /* Add animation keyframes */
+        @keyframes slideBackground {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        /* Add navigation bar specific styles */
+        .navbar {
+            background-color: #2D3250; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar .nav-links a {
+            color: white;
+            font-weight: 500;
+        }
+
+        .navbar .nav-links a:hover {
+            color: #f5f5f5;
+        }
+
+        .navbar .nav-links a.active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .navbar .nav-brand h1 {
+            color: white;
+        }
+
+        .navbar .search-bar input {
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .navbar .search-bar button {
+            color: #333;
+        }
+
+        .navbar .user-info a {
+            color: white;
+        }
+
+        .navbar .cart-icon {
+            color: white;
+        }
+
+        .navbar .cart-count {
+            color: white;
+            background-color: #171717;
+        }
+
+        /* Rest of your existing styles */
+        .about-section {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .mission-vision {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .mission-card, .vision-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .mission-card::before, .vision-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .mission-card > *, .vision-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .mission-card:hover, .vision-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .product-range {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .product-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: backwards;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .product-card:hover {
+            animation: pulse 2s infinite;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background: #2D3250;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -1px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+            animation: fadeInUp 1s ease-out;
+            animation-fill-mode: backwards;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-content {
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .timeline-content img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .testimonials {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .testimonial-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+            transition: transform 0.3s ease;
+        }
+
+        .testimonial-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .testimonial-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .stat-card {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .stat-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2D3250;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            height: 250px;
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: backwards;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-item .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .overlay {
+            transform: translateY(0);
+        }
+
+        .gallery-item .overlay h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .gallery-item .overlay p {
+            margin: 0;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .product-card img {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .timeline-content img {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .mission-card, .vision-card {
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Add animation delays for cascade effect */
+        .product-card:nth-child(1) { animation-delay: 0.1s; }
+        .product-card:nth-child(2) { animation-delay: 0.2s; }
+        .product-card:nth-child(3) { animation-delay: 0.3s; }
+        .product-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Add scroll reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero section with devices */
+        .about-hero {
+            position: relative;
+            background: linear-gradient(45deg, 
+                rgba(45, 50, 80, 0.95), 
+                rgba(45, 50, 80, 0.85),
+                rgba(45, 50, 80, 0.95));
+            padding: 150px 20px;
+            text-align: center;
+            overflow: hidden;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Device background container */
+        .device-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .device {
+            position: absolute;
+            opacity: 0.15;
+            transition: all 0.5s ease;
+        }
+
+        .device img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Device positions and animations */
+        .laptop-1 {
+            width: 400px;
+            top: 10%;
+            right: -50px;
+            animation: floatAnimation 8s infinite ease-in-out;
+        }
+
+        .laptop-2 {
+            width: 350px;
+            bottom: 5%;
+            left: -30px;
+            animation: floatAnimation 9s infinite ease-in-out 1s;
+        }
+
+        .phone-1 {
+            width: 150px;
+            top: 20%;
+            left: 10%;
+            animation: floatAnimation 6s infinite ease-in-out 0.5s;
+        }
+
+        .phone-2 {
+            width: 180px;
+            bottom: 15%;
+            right: 15%;
+            animation: floatAnimation 7s infinite ease-in-out 1.5s;
+        }
+
+        .tablet {
+            width: 250px;
+            top: 40%;
+            right: 20%;
+            animation: floatAnimation 10s infinite ease-in-out 2s;
+        }
+
+        .headphones {
+            width: 200px;
+            bottom: 30%;
+            left: 20%;
+            animation: floatAnimation 8s infinite ease-in-out 1s;
+        }
+
+        .smartwatch {
+            width: 100px;
+            top: 35%;
+            left: 5%;
+            animation: floatAnimation 5s infinite ease-in-out 0.5s;
+        }
+
+        /* Content styles */
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            background: rgba(45, 50, 80, 0.6);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .about-hero h1 {
+            color: white;
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .about-hero p {
+            color: white;
+            font-size: 1.5em;
+            opacity: 0.9;
+        }
+
+        /* Hover effects */
+        .device:hover {
+            opacity: 0.25;
+            transform: scale(1.05);
+            filter: brightness(1.2);
+        }
+
+        .hero-content:hover {
+            background: rgba(45, 50, 80, 0.7);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1>V-!magine</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <div class="dropdown">
+                <a href="#" class="dropbtn">Categories <i class="fas fa-chevron-down"></i></a>
+                <div class="dropdown-content">
+                    <!-- Categories will be dynamically added -->
+                </div>
+            </div>
+            <a href="index.html#deals">Deals</a>
+            <a href="about.html" class="active">About</a>
+            <a href="index.html#contact">Contact</a>
+        </div>
+        <div class="nav-actions">
+            <div class="search-bar">
+                <input type="text" placeholder="Search products...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div class="user-info">
+                <div class="guest-actions" id="guest-actions">
+                    <a href="auth.html"><i class="fas fa-user"></i></a>
+                </div>
+                <div class="user-profile" id="user-profile" style="display: none;">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="user-name"></span>
+                </div>
+            </div>
+            <div class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cinematic Hero Section -->
+    <section class="about-hero">
+        <!-- Light beams -->
+        <div class="light-beam beam-1"></div>
+        <div class="light-beam beam-2"></div>
+        <div class="light-beam beam-3"></div>
+
+        <!-- Floating particles -->
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+
+        <!-- Main content -->
+        <div class="cinematic-content">
+            <h1>About V-!magine</h1>
+            <p>Your Gateway to the Future of Technology</p>
+        </div>
+    </section>
+
+    <!-- Brand Introduction -->
+    <section class="about-section">
+        <h2>Welcome to V-!magine</h2>
+        <p>V-!magine is your one-stop destination for next-gen electronics and tech essentials. We're not just a store; we're your partner in embracing the digital future.</p>
+    </section>
+
+    <!-- Mission & Vision -->
+    <section class="about-section">
+        <div class="mission-vision">
+            <div class="mission-card" style="background-image: url('https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3');">
+                <i class="fas fa-bullseye fa-3x" style="color: #2D3250;"></i>
+                <h3>Our Mission</h3>
+                <p>To make cutting-edge technology accessible, affordable, and exciting for everyone. We believe that innovation should be within everyone's reach.</p>
+            </div>
+            <div class="vision-card" style="background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3');">
+                <i class="fas fa-eye fa-3x" style="color: #2D3250;"></i>
+                <h3>Our Vision</h3>
+                <p>To lead the digital lifestyle revolution by bridging people with intelligent gadgets that enhance their daily lives.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Range -->
+    <section class="about-section">
+        <h2>Our Product Range</h2>
+        <div class="product-range">
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1558002038-1055907df827?ixlib=rb-4.0.3" alt="Smart Home">
+                <i class="fas fa-home fa-2x" style="color: #2D3250;"></i>
+                <h3>Smart Home Devices</h3>
+                <p>Transform your living space with intelligent automation</p>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3" alt="Mobile Accessories">
+                <i class="fas fa-mobile-alt fa-2x" style="color: #2D3250;"></i>
+                <h3>Mobile & Computer Accessories</h3>
+                <p>Enhance your digital experience with premium accessories</p>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?ixlib=rb-4.0.3" alt="Wearables">
+                <i class="fas fa-watch fa-2x" style="color: #2D3250;"></i>
+                <h3>Wearables & Health Tech</h3>
+                <p>Stay connected and monitor your wellness</p>
+            </div>
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1581093458791-9d15482442f6?ixlib=rb-4.0.3" alt="DIY Kits">
+                <i class="fas fa-tools fa-2x" style="color: #2D3250;"></i>
+                <h3>DIY Electronic Kits</h3>
+                <p>Build and learn with hands-on tech projects</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- What Makes Us Unique -->
+    <section class="about-section" style="background: #f8f9fa;">
+        <h2>What Makes Us Unique</h2>
+        <div class="stats">
+            <div class="stat-card">
+                <i class="fas fa-rocket fa-2x" style="color: #2D3250;"></i>
+                <h3>Futuristic Selection</h3>
+                <p>Always ahead with the latest tech trends</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-truck fa-2x" style="color: #2D3250;"></i>
+                <h3>Fast Delivery</h3>
+                <p>Quick and reliable shipping nationwide</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users fa-2x" style="color: #2D3250;"></i>
+                <h3>Customer First</h3>
+                <p>24/7 support and easy returns</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-blog fa-2x" style="color: #2D3250;"></i>
+                <h3>Tech Updates</h3>
+                <p>Regular insights and tech news</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="about-section">
+        <h2>Our Journey</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3" alt="2024">
+                    <h3>2024</h3>
+                    <p>V-!magine was born with a vision to revolutionize tech retail</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3" alt="2025">
+                    <h3>2025</h3>
+                    <p>Reached 10,000+ happy customers and expanded product range</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3" alt="2026">
+                    <h3>2026</h3>
+                    <p>Launched our innovative tech blog and community platform</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="about-section">
+        <h2>What Our Customers Say</h2>
+        <div class="testimonials">
+            <div class="testimonial-card">
+                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Customer">
+                <h3>John Doe</h3>
+                <p>"V-!magine has transformed how I shop for tech. Their selection and service are unmatched!"</p>
+            </div>
+            <div class="testimonial-card">
+                <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Customer">
+                <h3>Jane Smith</h3>
+                <p>"The quality of products and customer support is exceptional. Truly a tech lover's paradise!"</p>
+            </div>
+            <div class="testimonial-card">
+                <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Customer">
+                <h3>Mike Johnson</h3>
+                <p>"Fast delivery and great prices. V-!magine is my go-to for all tech needs!"</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="about-section">
+        <h2>Our Gallery</h2>
+        <div class="gallery">
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3" alt="Laptops">
+                <div class="overlay">
+                    <h3>Premium Laptops</h3>
+                    <p>High-performance laptops for work and gaming</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3" alt="Smartphones">
+                <div class="overlay">
+                    <h3>Latest Smartphones</h3>
+                    <p>Cutting-edge mobile technology</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?ixlib=rb-4.0.3" alt="Tablets">
+                <div class="overlay">
+                    <h3>Tablets & iPads</h3>
+                    <p>Versatile tablets for productivity</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?ixlib=rb-4.0.3" alt="Headphones">
+                <div class="overlay">
+                    <h3>Premium Headphones</h3>
+                    <p>Immersive audio experience</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3" alt="Gaming Setup">
+                <div class="overlay">
+                    <h3>Gaming Gear</h3>
+                    <p>Professional gaming equipment</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1558002038-1055907df827?ixlib=rb-4.0.3" alt="Smart Home">
+                <div class="overlay">
+                    <h3>Smart Home</h3>
+                    <p>Intelligent home automation</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Function to handle smooth scrolling
+        function smoothScrollToSection(sectionId) {
+            const section = document.querySelector(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Function to fetch and display about page data
+        async function fetchAboutData() {
+            try {
+                const response = await fetch('/api/about');
+                const result = await response.json();
+
+                if (result.success) {
+                    const data = result.data;
+                    
+                    // Update hero section
+                    document.querySelector('.about-hero').style.setProperty('--hero-image', `url(${data.companyInfo.heroImage})`);
+                    document.querySelector('.about-hero h1').textContent = `About ${data.companyInfo.name}`;
+                    document.querySelector('.about-hero p').textContent = data.companyInfo.tagline;
+
+                    // Update brand introduction
+                    document.querySelector('.about-section h2').textContent = `Welcome to ${data.companyInfo.name}`;
+                    document.querySelector('.about-section p').textContent = data.companyInfo.description;
+
+                    // Update mission and vision
+                    const missionCard = document.querySelector('.mission-card');
+                    missionCard.style.setProperty('--mission-image', `url(${data.missionVision.mission.image})`);
+                    missionCard.querySelector('h3').textContent = data.missionVision.mission.title;
+                    missionCard.querySelector('p').textContent = data.missionVision.mission.description;
+
+                    const visionCard = document.querySelector('.vision-card');
+                    visionCard.style.setProperty('--vision-image', `url(${data.missionVision.vision.image})`);
+                    visionCard.querySelector('h3').textContent = data.missionVision.vision.title;
+                    visionCard.querySelector('p').textContent = data.missionVision.vision.description;
+
+                    // Update product range
+                    const productRange = document.querySelector('.product-range');
+                    productRange.innerHTML = data.productRange.map(product => `
+                        <div class="product-card">
+                            <img src="${product.image}" alt="${product.title}">
+                            <i class="fas fa-${product.icon} fa-2x" style="color: #2D3250;"></i>
+                            <h3>${product.title}</h3>
+                            <p>${product.description}</p>
+                        </div>
+                    `).join('');
+
+                    // Update unique features
+                    const stats = document.querySelector('.stats');
+                    stats.innerHTML = data.uniqueFeatures.map(feature => `
+                        <div class="stat-card">
+                            <img src="${feature.image}" alt="${feature.title}">
+                            <i class="fas fa-${feature.icon} fa-2x" style="color: #2D3250;"></i>
+                            <h3>${feature.title}</h3>
+                            <p>${feature.description}</p>
+                        </div>
+                    `).join('');
+
+                    // Update timeline
+                    const timeline = document.querySelector('.timeline');
+                    timeline.innerHTML = data.timeline.map(item => `
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <img src="${item.image}" alt="${item.year}">
+                                <h3>${item.year}</h3>
+                                <p>${item.event}</p>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // Update testimonials
+                    const testimonials = document.querySelector('.testimonials');
+                    testimonials.innerHTML = data.testimonials.map(testimonial => `
+                        <div class="testimonial-card" style="--testimonial-bg: url(${testimonial.background})">
+                            <img src="${testimonial.image}" alt="${testimonial.name}">
+                            <h3>${testimonial.name}</h3>
+                            <p>"${testimonial.quote}"</p>
+                        </div>
+                    `).join('');
+
+                    // Update gallery
+                    const gallery = document.querySelector('.gallery');
+                    gallery.innerHTML = data.gallery.map(item => `
+                        <div class="gallery-item">
+                            <img src="${item.image}" alt="${item.title}">
+                            <div class="overlay">
+                                <h3>${item.title}</h3>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error fetching about data:', error);
+            }
+        }
+
+        // Handle navigation from index page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if we came from index page with a hash
+            const hash = window.location.hash;
+            if (hash) {
+                // Remove the hash and scroll to the section
+                window.history.replaceState(null, null, ' ');
+                setTimeout(() => smoothScrollToSection(hash), 100);
+            }
+
+            // Initialize the page
+            fetchAboutData();
+        });
+
+        // Add smooth scroll behavior to all internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const sectionId = this.getAttribute('href');
+                smoothScrollToSection(sectionId);
+            });
+        });
+    </script>
+    <script src="script.js"></script>
+    <script>
+        // Scroll reveal animation
+        function reveal() {
+            var reveals = document.querySelectorAll('.about-section');
+            
+            reveals.forEach(reveal => {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveal.getBoundingClientRect().top;
+                var elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    reveal.classList.add('reveal');
+                    reveal.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        // Add initial reveal check
+        reveal();
+    </script>
+</body>
+</html> 

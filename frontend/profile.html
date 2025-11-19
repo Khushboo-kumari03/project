@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - V-!magine</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2D3250 0%, #7077A1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .profile-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(45, 50, 80, 0.18), 0 2px 8px rgba(45, 50, 80, 0.10);
+            padding: 2.5rem 2.2rem 2rem 2.2rem;
+            max-width: 400px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2rem 0;
+            animation: fadeIn 0.7s;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #2D3250;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+        }
+        .profile-avatar i {
+            color: #fff;
+            font-size: 2.5rem;
+        }
+        .profile-details {
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+        .profile-details h2 {
+            text-align: center;
+            color: #2D3250;
+            margin-bottom: 0.5rem;
+        }
+        .profile-details p {
+            margin: 0.3rem 0;
+            color: #333;
+            font-size: 1rem;
+        }
+        .profile-details .profile-label {
+            color: #7077A1;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+        .logout-btn {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.2s;
+        }
+        .logout-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-card" id="profile-card" style="display:none;">
+        <div class="profile-avatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <div class="profile-details" id="profile-details">
+            <!-- User details will be inserted here -->
+        </div>
+        <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+    <script>
+    // Redirect to login if not logged in
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = 'auth.html';
+    }
+
+    // Always fetch user from API for latest info
+    async function fetchUser() {
+        try {
+            const res = await fetch('http://localhost:4001/api/auth/me', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                return await res.json();
+            }
+        } catch (e) {}
+        return null;
+    }
+
+    function renderProfile(user) {
+        const card = document.getElementById('profile-card');
+        const details = document.getElementById('profile-details');
+        if (!user) {
+            card.innerHTML = '<p style="color:#ff4444;">User not found or not logged in.</p>';
+            card.style.display = 'block';
+            return;
+        }
+        details.innerHTML = `
+            <h2>${user.fullName || user.fullname || user.username || user.email}</h2>
+            <p><span class="profile-label">Email:</span> ${user.email || ''}</p>
+            <p><span class="profile-label">Username:</span> ${user.username || ''}</p>
+            <p><span class="profile-label">Phone:</span> ${user.phoneNumber || ''}</p>
+            <p><span class="profile-label">Role:</span> ${user.role || 'user'}</p>
+            <p><span class="profile-label">Address:</span> ${user.address ? [user.address.street, user.address.city, user.address.state, user.address.zipCode, user.address.country].filter(Boolean).join(', ') : ''}</p>
+        `;
+        card.style.display = 'flex';
+    }
+
+    fetchUser().then(renderProfile);
+
+    document.getElementById('logout-btn').onclick = function() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'auth.html';
+    };
+    </script>
+</body>
+</html> 

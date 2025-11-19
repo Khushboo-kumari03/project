@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Electronics Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/admin-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+                <p id="admin-name">Admin User</p>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="active" data-page="dashboard">
+                    <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                </li>
+                <li data-page="products">
+                    <a href="#"><i class="fas fa-box"></i> Products</a>
+                </li>
+                <li data-page="orders">
+                    <a href="#"><i class="fas fa-shopping-cart"></i> Orders</a>
+                </li>
+                <li data-page="users">
+                    <a href="#"><i class="fas fa-users"></i> Users</a>
+                </li>
+                <li data-page="categories">
+                    <a href="#"><i class="fas fa-tags"></i> Categories</a>
+                </li>
+                <li data-page="product-images">
+                    <a href="#"><i class="fas fa-images"></i> Product Images</a>
+                </li>
+                <li id="logout-btn">
+                    <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="user-info">
+                    <span id="admin-email">admin@example.com</span>
+                    <img src="https://via.placeholder.com/40" alt="Admin" class="user-avatar">
+                </div>
+            </div>
+
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboard-page">
+                <div class="page-header">
+                    <h1>📊 Dashboard Overview</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download"></i>
+                            Export Report
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Users</h3>
+                            <p id="user-count">Loading...</p>
+                            <small class="stat-change positive">+12% from last month</small>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Products</h3>
+                            <p id="product-count">Loading...</p>
+                            <small class="stat-change positive">+5% from last month</small>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Orders</h3>
+                            <p id="order-count">Loading...</p>
+                            <small class="stat-change positive">+18% from last month</small>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Revenue</h3>
+                            <p id="total-revenue">Loading...</p>
+                            <small class="stat-change positive">+25% from last month</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h2>
+                            <i class="fas fa-clock"></i>
+                            Recent Orders
+                        </h2>
+                        <div class="table-container">
+                            <table id="recent-orders-table" class="recent-orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="6" class="loading">Loading orders...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h2>
+                            <i class="fas fa-bell"></i>
+                            Recent Activity
+                        </h2>
+                        <div id="recent-activity" class="activity-feed">
+                            <div class="loading">Loading activities...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Dashboard Cards -->
+                <div class="dashboard-grid" style="margin-top: 8px;">
+                    <div class="dashboard-card">
+                        <h2>
+                            <i class="fas fa-chart-line"></i>
+                            Sales Trend (Last 7 Days)
+                        </h2>
+                        <div id="sales-trend-chart" class="chart-container">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h2>
+                            <i class="fas fa-star"></i>
+                            Top Products
+                        </h2>
+                        <div id="top-products" class="top-products-list">
+                            <div class="loading">Loading top products...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Page -->
+            <div class="page" id="products-page">
+                <div class="page-header">
+                    <h1>Products</h1>
+                    <button id="add-product-btn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Product
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table id="products-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Category</th>
+                                <th>Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="6">Loading products...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Orders Page -->
+            <div class="page" id="orders-page">
+                <h1>Orders</h1>
+
+                <div class="table-container">
+                    <table id="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="6">Loading orders...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Users Page -->
+            <div class="page" id="users-page">
+                <h1>Users</h1>
+
+                <div class="table-container">
+                    <table id="users-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="6">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Categories Page -->
+            <div class="page" id="categories-page">
+                <div class="page-header">
+                    <h1>Categories</h1>
+                    <button id="add-category-btn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Category
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table id="categories-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Products</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="4">Loading categories...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Product Images Page -->
+            <div class="page" id="product-images-page">
+                <div class="page-header">
+                    <h1>🖼️ Product Images Manager</h1>
+                    <p>Upload and manage 4 unique images for each product</p>
+                </div>
+
+                <div class="image-upload-container">
+                    <div class="form-group">
+                        <label for="product-select-images">Select Product:</label>
+                        <select id="product-select-images" required>
+                            <option value="">Loading products...</option>
+                        </select>
+                    </div>
+
+                    <div class="image-inputs-container">
+                        <h3>Product Images (4 URLs):</h3>
+                        <div class="image-input-grid">
+                            <div class="image-input-item">
+                                <label>Image 1 (Main):</label>
+                                <input type="url" id="product-image-1" placeholder="https://example.com/image1.jpg">
+                                <div class="image-preview" id="preview-1"></div>
+                            </div>
+                            <div class="image-input-item">
+                                <label>Image 2 (Side View):</label>
+                                <input type="url" id="product-image-2" placeholder="https://example.com/image2.jpg">
+                                <div class="image-preview" id="preview-2"></div>
+                            </div>
+                            <div class="image-input-item">
+                                <label>Image 3 (Detail):</label>
+                                <input type="url" id="product-image-3" placeholder="https://example.com/image3.jpg">
+                                <div class="image-preview" id="preview-3"></div>
+                            </div>
+                            <div class="image-input-item">
+                                <label>Image 4 (Package):</label>
+                                <input type="url" id="product-image-4" placeholder="https://example.com/image4.jpg">
+                                <div class="image-preview" id="preview-4"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="update-images-btn" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update Product Images
+                        </button>
+                        <button id="clear-images-btn" class="btn btn-secondary">
+                            <i class="fas fa-trash"></i> Clear All
+                        </button>
+                    </div>
+
+                    <div id="image-upload-message" class="message-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="product-modal-title">Add Product</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="product-form">
+                    <input type="hidden" id="product-id">
+
+                    <div class="form-group">
+                        <label for="product-name">Product Name</label>
+                        <input type="text" id="product-name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-price">Price</label>
+                        <input type="number" id="product-price" min="0" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-description">Description</label>
+                        <textarea id="product-description" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-category">Category</label>
+                        <select id="product-category" required>
+                            <option value="">Select Category</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-image">Image URL</label>
+                        <input type="text" id="product-image" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-stock">Stock Quantity</label>
+                        <input type="number" id="product-stock" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Save Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="order-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Order Details</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="order-details">
+                    <div class="loading">Loading order details...</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="order-status">Update Status</label>
+                    <select id="order-status">
+                        <option value="pending">Pending</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="payment-status">Payment Status</label>
+                    <select id="payment-status">
+                        <option value="pending">Pending</option>
+                        <option value="paid">Paid</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <button id="update-order-btn" class="btn btn-primary">Update Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="user-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>User Details</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="user-form">
+                    <input type="hidden" id="user-id">
+
+                    <div class="form-group">
+                        <label for="user-username">Username</label>
+                        <input type="text" id="user-username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user-email">Email</label>
+                        <input type="email" id="user-email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user-fullname">Full Name</label>
+                        <input type="text" id="user-fullname" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user-role">Role</label>
+                        <select id="user-role" required>
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Update User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="category-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="category-modal-title">Add Category</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="category-form">
+                    <input type="hidden" id="category-id">
+
+                    <div class="form-group">
+                        <label for="category-name">Category Name</label>
+                        <input type="text" id="category-name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Save Category</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

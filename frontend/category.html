@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category - Your Store</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <!-- ... your existing navbar code ... -->
+    </nav>
+    <div class="category-section">
+        <h2 id="category-title">Category</h2>
+        <div class="products-grid" id="category-products"></div>
+    </div>
+    <script>
+    // Get category from URL
+    function getCategoryFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('category');
+    }
+
+    // Fetch and display products for the category
+    async function loadCategoryProducts() {
+        const category = getCategoryFromURL();
+        document.getElementById('category-title').textContent = category ? category : 'Category';
+        const grid = document.getElementById('category-products');
+        grid.innerHTML = '<div class="loading-spinner"><div class="spinner"></div>Loading...</div>';
+        try {
+            const res = await fetch(`http://localhost:4001/api/products/category/${encodeURIComponent(category)}`);
+            const data = await res.json();
+            if (data.products && data.products.length) {
+                grid.innerHTML = data.products.map(product => `
+                    <div class="product-card">
+                        <div class="product-content">
+                            <div class="product-image" onclick="viewProductDetail('${product._id}')">
+                                <img src="${product.imageUrl || 'https://via.placeholder.com/150'}" alt="${product.productname}">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-details">
+                                    <h3 class="product-name" onclick="viewProductDetail('${product._id}')">${product.productname}</h3>
+                                    <p class="description">${product.description || ''}</p>
+                                    <p class="price">₹${Math.round(product.price * 83)}</p>
+                                    <p class="stock">In Stock: ${product.stockQuantity || 0}</p>
+                                    <div class="rating">Rating: ${product.rating || 'No ratings'}</div>
+                                </div>
+                                <div class="product-actions">
+                                    <button onclick="addToCart('${product._id || product.id}')" class="add-to-cart">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        <span>Add to Cart</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                grid.innerHTML = '<p>No products found in this category.</p>';
+            }
+        } catch (err) {
+            console.error('Error loading products:', err);
+            grid.innerHTML = '<p>Error loading products.</p>';
+        }
+    }
+
+    // Add to cart functionality
+    async function addToCart(productId) {
+        const userId = localStorage.getItem('userId');
+        const token = localStorage.getItem('token');
+
+        if (!userId || !token) {
+            alert('Please login to add items to cart');
+            window.location.href = 'auth.html';
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:4001/api/cart/${userId}/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    quantity: 1
+                })
+            });
+
+            const data = await response.json();
+            console.log('Add to cart response:', data);
+
+            if (response.ok) {
+                alert('Product added to cart successfully!');
+                updateCartCount();
+            } else {
+                alert(data.message || 'Failed to add product to cart');
+            }
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            alert('Error adding product to cart');
+        }
+    }
+
+    // Update cart count in navigation
+    async function updateCartCount() {
+        const userId = localStorage.getItem('userId');
+        const token = localStorage.getItem('token');
+
+        if (!userId || !token) {
+            document.querySelector('.cart-count').textContent = '0';
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:4001/api/cart/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+
+            if (response.ok && data.carts) {
+                const totalItems = data.carts.reduce((sum, item) => sum + item.quantity, 0);
+                document.querySelector('.cart-count').textContent = totalItems.toString();
+            }
+        } catch (error) {
+            console.error('Error updating cart count:', error);
+        }
+    }
+
+    // Initialize
+    loadCategoryProducts();
+    updateCartCount();
+    </script>
+</body>
+</html>

@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - V-!magine</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .cart-page {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .cart-header h1 {
+            color: #2D3250;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .continue-shopping {
+            text-decoration: none;
+            color: #2D3250;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .continue-shopping:hover {
+            color: #424769;
+        }
+
+        .cart-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        .cart-items {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: auto 3fr 1fr auto;
+            gap: 20px;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .item-details h3 {
+            margin: 0 0 8px 0;
+            color: #2D3250;
+        }
+
+        .item-details p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .item-price {
+            color: #2D3250;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-btn {
+            background: #2D3250;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .quantity-btn:hover:not(:disabled) {
+            background: #424769;
+        }
+
+        .quantity-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .quantity {
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .remove-btn {
+            color: #dc3545;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            transition: color 0.2s;
+        }
+
+        .remove-btn:hover {
+            color: #c82333;
+        }
+
+        .cart-summary {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 25px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-header {
+            color: #2D3250;
+            font-size: 1.2rem;
+            margin: 0 0 20px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .summary-row.total {
+            color: #2D3250;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-top: 2px solid #eee;
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+
+        .checkout-btn {
+            background: #2D3250;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+
+        .checkout-btn:hover {
+            background: #424769;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            grid-column: 1 / -1;
+        }
+
+        .empty-cart i {
+            font-size: 4rem;
+            color: #2D3250;
+            margin-bottom: 20px;
+        }
+
+        .empty-cart h2 {
+            color: #2D3250;
+            margin-bottom: 20px;
+        }
+
+        .empty-cart .shop-now-btn {
+            display: inline-block;
+            background: #2D3250;
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+
+        .empty-cart .shop-now-btn:hover {
+            background: #424769;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            grid-column: 1 / -1;
+        }
+
+        .loading i {
+            color: #2D3250;
+            font-size: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-summary {
+                position: static;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cart-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .item-image {
+                margin: 0 auto;
+            }
+
+            .quantity-controls {
+                justify-content: center;
+            }
+        }
+
+        .stock-warning {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1>V-!magine</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="products.html">Products</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div class="nav-actions">
+            <div class="user-info">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            <div class="cart-icon">
+                <a href="cart-page.html" class="active">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="cart-page">
+        <div class="cart-header">
+            <h1>Shopping Cart</h1>
+            <a href="index.html" class="continue-shopping">
+                <i class="fas fa-arrow-left"></i>
+                Continue Shopping
+            </a>
+        </div>
+
+        <div class="cart-container" id="cartContainer">
+            <!-- Content will be loaded dynamically -->
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:4001/api';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuthAndLoadCart();
+            updateUserUI();
+        });
+
+        async function checkAuthAndLoadCart() {
+            const userId = localStorage.getItem('userId');
+            const token = localStorage.getItem('token');
+
+            if (!userId || !token) {
+                showEmptyCart('Please login to view your cart');
+                return;
+            }
+
+            try {
+                await loadCart();
+            } catch (error) {
+                console.error('Error loading cart:', error);
+                if (error.message === 'Unauthorized') {
+                    localStorage.clear();
+                    window.location.href = 'auth.html';
+                }
+            }
+        }
+
+        function showLoadingState() {
+            const container = document.getElementById('cartContainer');
+            container.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading your cart...</p>
+                </div>
+            `;
+        }
+
+        async function loadCart() {
+            const userId = localStorage.getItem('userId');
+            const token = localStorage.getItem('token');
+
+            if (!userId || !token) {
+                showEmptyCart('Please login to view your cart');
+                return;
+            }
+
+            showLoadingState();
+
+            try {
+                console.log('Making request with token:', token); // Debug log
+                const response = await fetch(`${API_URL}/cart/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Server response:', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        data: errorData
+                    });
+
+                    if (response.status === 401) {
+                        localStorage.clear();
+                        window.location.href = 'auth.html';
+                        return;
+                    }
+
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Cart data:', data);
+
+                if (!data.carts || data.carts.length === 0) {
+                    showEmptyCart('Your cart is empty');
+                    return;
+                }
+
+                displayCart(data.carts);
+            } catch (error) {
+                console.error('Error in loadCart:', error);
+                showEmptyCart(`Error loading cart: ${error.message}. Please try again.`);
+            }
+        }
+
+        function displayCart(cartItems) {
+            const container = document.getElementById('cartContainer');
+            let subtotal = 0;
+
+            // Calculate subtotal and prepare items HTML
+            const itemsHtml = cartItems.map(item => {
+                const product = item.productid;
+                const itemTotal = product.price * item.quantity;
+                subtotal += itemTotal;
+
+                return `
+                    <div class="cart-item">
+                        <img src="${product.imageUrl || 'placeholder.jpg'}" alt="${product.productname}" class="item-image">
+                        <div class="item-details">
+                            <h3>${product.productname}</h3>
+                            <p>${product.description || 'No description available'}</p>
+                            ${product.stockQuantity < 5 ?
+                                `<p class="stock-warning">Only ${product.stockQuantity} left in stock!</p>` : ''}
+                        </div>
+                        <div class="item-price">₹${(product.price * 83).toFixed(0)}</div>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" onclick="updateQuantity('${item._id}', ${item.quantity - 1})"
+                                    ${item.quantity <= 1 ? 'disabled' : ''}>-</button>
+                            <span class="quantity">${item.quantity}</span>
+                            <button class="quantity-btn" onclick="updateQuantity('${item._id}', ${item.quantity + 1})"
+                                    ${item.quantity >= product.stockQuantity ? 'disabled' : ''}>+</button>
+                            <button class="remove-btn" onclick="removeItem('${item._id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Calculate summary values with INR conversion
+            const subtotalINR = subtotal * 83;
+            const tax = subtotalINR * 0.1; // 10% tax
+            const total = subtotalINR + tax;
+
+            // Prepare the complete cart HTML
+            container.innerHTML = `
+                <div class="cart-items">
+                    ${itemsHtml}
+                </div>
+                <div class="cart-summary">
+                    <h2 class="summary-header">Order Summary</h2>
+                    <div class="summary-row">
+                        <span>Items (${cartItems.length}):</span>
+                        <span>₹${subtotalINR.toFixed(0)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax (10%):</span>
+                        <span>₹${tax.toFixed(0)}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span>₹${total.toFixed(0)}</span>
+                    </div>
+                    <button class="checkout-btn" onclick="checkout()">
+                        <i class="fas fa-lock"></i> Proceed to Checkout
+                    </button>
+                </div>
+            `;
+
+            // Update cart count in navigation
+            document.querySelector('.cart-count').textContent = cartItems.length;
+        }
+
+        function showEmptyCart(message) {
+            const container = document.getElementById('cartContainer');
+            container.innerHTML = `
+                <div class="empty-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h2>${message}</h2>
+                    <a href="index.html" class="shop-now-btn">Start Shopping</a>
+                </div>
+            `;
+            document.querySelector('.cart-count').textContent = '0';
+        }
+
+        async function updateQuantity(cartId, newQuantity) {
+            if (newQuantity < 1) return;
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/cart/${cartId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ quantity: newQuantity })
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.clear();
+                        window.location.href = 'auth.html';
+                        return;
+                    }
+                    throw new Error('Failed to update quantity');
+                }
+
+                await loadCart(); // Reload cart after successful update
+            } catch (error) {
+                console.error('Error updating quantity:', error);
+                alert('Error updating quantity. Please try again.');
+            }
+        }
+
+        async function removeItem(cartId) {
+            if (!confirm('Are you sure you want to remove this item from your cart?')) return;
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/cart/${cartId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.clear();
+                        window.location.href = 'auth.html';
+                        return;
+                    }
+                    throw new Error('Failed to remove item');
+                }
+
+                await loadCart(); // Reload cart after successful deletion
+            } catch (error) {
+                console.error('Error removing item:', error);
+                alert('Error removing item. Please try again.');
+            }
+        }
+
+        function updateUserUI() {
+            const userId = localStorage.getItem('userId');
+            const userName = localStorage.getItem('userName');
+            const userInfo = document.querySelector('.user-info');
+
+            if (userId && userName) {
+                userInfo.innerHTML = `
+                    <span style="margin-right: 10px;">${userName}</span>
+                    <button onclick="logout()" style="background: none; border: none; color: #fff; cursor: pointer;">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>`;
+            } else {
+                userInfo.innerHTML = '<a href="auth.html"><i class="fas fa-user"></i></a>';
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'auth.html';
+        }
+
+        async function checkout() {
+            const userId = localStorage.getItem('userId');
+            const token = localStorage.getItem('token');
+
+            if (!userId || !token) {
+                alert('Please login to checkout');
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            try {
+                // Show loading state
+                const container = document.getElementById('cartContainer');
+                const originalContent = container.innerHTML;
+                container.innerHTML = `
+                    <div class="loading" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #2D3250;"></i>
+                        <p>Processing your order...</p>
+                    </div>
+                `;
+
+                // Get cart data
+                const response = await fetch(`${API_URL}/cart/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch cart data');
+                }
+
+                const data = await response.json();
+
+                if (!data.carts || data.carts.length === 0) {
+                    alert('Your cart is empty');
+                    return;
+                }
+
+                // Calculate totals with INR conversion
+                let subtotal = 0;
+                data.carts.forEach(item => {
+                    subtotal += item.productid.price * item.quantity;
+                });
+
+                const subtotalINR = subtotal * 83;
+                const tax = subtotalINR * 0.1; // 10% tax
+                const shipping = 50 * 83; // Fixed shipping cost in INR
+                const total = subtotalINR + tax + shipping;
+
+                // Generate order ID
+                const orderId = 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+
+                // Get user data
+                const userResponse = await fetch(`${API_URL}/auth/user/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                let userData = { username: 'Customer' };
+                if (userResponse.ok) {
+                    userData = await userResponse.json();
+                }
+
+                // Show receipt
+                showReceipt(container, {
+                    orderId,
+                    date: new Date(),
+                    items: data.carts,
+                    subtotal: subtotalINR,
+                    tax,
+                    shipping,
+                    total,
+                    user: userData
+                });
+
+                // Clear cart (in a real app, you would call an API to clear the cart)
+                document.querySelector('.cart-count').textContent = '0';
+
+            } catch (error) {
+                console.error('Checkout error:', error);
+                alert('An error occurred during checkout: ' + error.message);
+            }
+        }
+
+        function showReceipt(container, orderData) {
+            // Format date
+            const formattedDate = orderData.date.toLocaleDateString() + ' ' + orderData.date.toLocaleTimeString();
+
+            // Create items HTML with INR conversion
+            let itemsHtml = '';
+            orderData.items.forEach(item => {
+                const product = item.productid;
+                const itemPriceINR = product.price * 83;
+                const itemTotalINR = itemPriceINR * item.quantity;
+
+                itemsHtml += `
+                    <tr>
+                        <td>${product.productname}</td>
+                        <td>${item.quantity}</td>
+                        <td>₹${itemPriceINR.toFixed(0)}</td>
+                        <td>₹${itemTotalINR.toFixed(0)}</td>
+                    </tr>
+                `;
+            });
+
+            // Create receipt HTML
+            container.innerHTML = `
+                <div class="receipt-container" style="grid-column: 1 / -1; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 30px; margin-bottom: 30px;">
+                    <div class="receipt-header" style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 20px;">
+                        <h2 style="color: #2D3250; margin-bottom: 5px;">Order Confirmation</h2>
+                        <p style="color: #666; margin: 0;">Thank you for your purchase!</p>
+                    </div>
+
+                    <div class="receipt-details" style="margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Order ID:</strong>
+                            <span>${orderData.orderId}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Date:</strong>
+                            <span>${formattedDate}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Customer:</strong>
+                            <span>${orderData.user.username || orderData.user.fullName || 'Customer'}</span>
+                        </div>
+                    </div>
+
+                    <div class="receipt-items" style="margin-bottom: 20px;">
+                        <h3 style="color: #2D3250; margin-bottom: 10px;">Order Items</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background-color: #f5f5f5;">
+                                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Product</th>
+                                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Quantity</th>
+                                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Price</th>
+                                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="receipt-summary" style="margin-top: 20px; border-top: 2px solid #eee; padding-top: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Subtotal:</span>
+                            <span>₹${orderData.subtotal.toFixed(0)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Tax (10%):</span>
+                            <span>₹${orderData.tax.toFixed(0)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Shipping:</span>
+                            <span>₹${orderData.shipping.toFixed(0)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 15px; font-weight: bold; font-size: 1.2em; color: #2D3250;">
+                            <span>Total:</span>
+                            <span>₹${orderData.total.toFixed(0)}</span>
+                        </div>
+                    </div>
+
+                    <div class="receipt-footer" style="margin-top: 30px; text-align: center; border-top: 2px solid #eee; padding-top: 20px;">
+                        <p style="margin-bottom: 15px;">A confirmation email has been sent to your registered email address.</p>
+                        <button id="download-receipt" style="background: #2D3250; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-right: 10px;">
+                            <i class="fas fa-download"></i> Download Receipt
+                        </button>
+                        <a href="index.html" style="display: inline-block; background: #F6B17A; color: white; text-decoration: none; padding: 12px 25px; border-radius: 8px; font-size: 1rem; font-weight: 600;">
+                            Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            // Add download functionality
+            document.getElementById('download-receipt').addEventListener('click', function() {
+                // Create a new window for printing
+                const printWindow = window.open('', '_blank');
+
+                // Create printable content
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Receipt #${orderData.orderId}</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                margin: 0;
+                                padding: 20px;
+                                color: #333;
+                            }
+                            .receipt-container {
+                                max-width: 800px;
+                                margin: 0 auto;
+                                border: 1px solid #ddd;
+                                padding: 30px;
+                            }
+                            .receipt-header {
+                                text-align: center;
+                                margin-bottom: 20px;
+                                border-bottom: 2px solid #eee;
+                                padding-bottom: 20px;
+                            }
+                            .receipt-header h2 {
+                                color: #2D3250;
+                                margin-bottom: 5px;
+                            }
+                            .receipt-details {
+                                margin-bottom: 20px;
+                            }
+                            .receipt-row {
+                                display: flex;
+                                justify-content: space-between;
+                                margin-bottom: 10px;
+                            }
+                            table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-bottom: 20px;
+                            }
+                            th, td {
+                                padding: 10px;
+                                text-align: left;
+                                border-bottom: 1px solid #ddd;
+                            }
+                            th {
+                                background-color: #f5f5f5;
+                            }
+                            .receipt-summary {
+                                margin-top: 20px;
+                                border-top: 2px solid #eee;
+                                padding-top: 20px;
+                            }
+                            .receipt-total {
+                                font-weight: bold;
+                                font-size: 1.2em;
+                                color: #2D3250;
+                                margin-top: 15px;
+                            }
+                            .receipt-footer {
+                                margin-top: 30px;
+                                text-align: center;
+                                border-top: 2px solid #eee;
+                                padding-top: 20px;
+                            }
+                            @media print {
+                                body {
+                                    print-color-adjust: exact;
+                                    -webkit-print-color-adjust: exact;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="receipt-container">
+                            <div class="receipt-header">
+                                <h2>V-!magine</h2>
+                                <p>Order Receipt</p>
+                            </div>
+
+                            <div class="receipt-details">
+                                <div class="receipt-row">
+                                    <strong>Order ID:</strong>
+                                    <span>${orderData.orderId}</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <strong>Date:</strong>
+                                    <span>${formattedDate}</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <strong>Customer:</strong>
+                                    <span>${orderData.user.username || orderData.user.fullName || 'Customer'}</span>
+                                </div>
+                            </div>
+
+                            <div class="receipt-items">
+                                <h3>Order Items</h3>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${itemsHtml}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="receipt-summary">
+                                <div class="receipt-row">
+                                    <span>Subtotal:</span>
+                                    <span>₹${orderData.subtotal.toFixed(0)}</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span>Tax (10%):</span>
+                                    <span>₹${orderData.tax.toFixed(0)}</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span>Shipping:</span>
+                                    <span>₹${orderData.shipping.toFixed(0)}</span>
+                                </div>
+                                <div class="receipt-row receipt-total">
+                                    <span>Total:</span>
+                                    <span>₹${orderData.total.toFixed(0)}</span>
+                                </div>
+                            </div>
+
+                            <div class="receipt-footer">
+                                <p>Thank you for shopping with V-!magine!</p>
+                                <p>For any questions, please contact our customer support.</p>
+                            </div>
+                        </div>
+                        <script>
+                            // Auto print when loaded
+                            window.onload = function() {
+                                window.print();
+                            };
+                        </script>
+                    </body>
+                    </html>
+                `);
+
+                printWindow.document.close();
+            });
+        }
+    </script>
+</body>
+</html>

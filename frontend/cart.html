@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - V-!magine</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .cart-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .cart-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .cart-item img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            margin-right: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .item-details {
+            flex-grow: 1;
+        }
+
+        .item-details h3 {
+            margin: 0;
+            color: #2D3250;
+        }
+
+        .item-details p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 20px;
+        }
+
+        .quantity-controls button {
+            background: #2D3250;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .quantity-controls button:hover:not(:disabled) {
+            background: #424769;
+        }
+
+        .quantity-controls button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .quantity-controls span {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 10px;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #2D3250;
+            margin: 0 20px;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .cart-summary {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-row.total {
+            font-weight: bold;
+            border-top: 2px solid #eee;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #2D3250;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        .checkout-btn:hover {
+            background: #424769;
+        }
+
+        .checkout-btn i {
+            margin-right: 8px;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 50px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .empty-cart i {
+            font-size: 4rem;
+            color: #2D3250;
+            margin-bottom: 20px;
+        }
+
+        .empty-cart h2 {
+            color: #2D3250;
+            margin-bottom: 20px;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Shipping Address Modal */
+        .shipping-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .shipping-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .shipping-form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .shipping-form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .shipping-form-header h2 {
+            color: #2D3250;
+            font-size: 1.8rem;
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .shipping-form-header p {
+            color: #666;
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .close-shipping-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-shipping-modal:hover {
+            color: #333;
+        }
+
+        .shipping-form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: #2D3250;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+            margin-left: 3px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2D3250;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(45, 50, 80, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+            padding-right: 45px;
+        }
+
+        .shipping-form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 15px;
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background: #e9ecef;
+            border-color: #ced4da;
+        }
+
+        .btn-continue {
+            flex: 2;
+            padding: 15px;
+            background: #2D3250;
+            color: white;
+            border: 2px solid #2D3250;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-continue:hover {
+            background: #424769;
+            border-color: #424769;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(45, 50, 80, 0.2);
+        }
+
+        .btn-continue:disabled {
+            background: #cccccc;
+            border-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .form-error {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group.error input,
+        .form-group.error select,
+        .form-group.error textarea {
+            border-color: #e74c3c;
+            background: #fff5f5;
+        }
+
+        .form-group.error .form-error {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .shipping-form-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .shipping-form-actions {
+                flex-direction: column;
+            }
+
+            .shipping-form-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        .loading-state i {
+            color: #2D3250;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fa-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        .error-message {
+            background: #fff3f3;
+            color: #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #dc3545;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-message i {
+            font-size: 1.2em;
+        }
+
+        .cart-container h1 {
+            color: #2D3250;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .cart-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .cart-item img {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+
+            .quantity-controls {
+                margin: 15px 0;
+            }
+
+            .price {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1>V-!magine</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div class="nav-actions">
+            <div class="user-info">
+                <a href="auth.html"><i class="fas fa-user"></i></a>
+            </div>
+            <div class="cart-icon">
+                <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="cart-container">
+        <h1>Shopping Cart</h1>
+        <div id="error-container"></div>
+        <div id="loading-container" class="loading-state" style="display: none;">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>Loading your cart...</p>
+        </div>
+        <div id="cart-items-container"></div>
+        <div id="cart-summary" class="cart-summary" style="display: none;">
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span id="subtotal">₹0</span>
+            </div>
+            <div class="summary-row">
+                <span>Tax (10%):</span>
+                <span id="tax">₹0</span>
+            </div>
+            <div class="summary-row total">
+                <span>Total:</span>
+                <span id="total">₹0</span>
+            </div>
+            <button id="checkout-btn" class="checkout-btn">
+                <i class="fas fa-shopping-bag"></i>
+                Proceed to Checkout
+            </button>
+        </div>
+        <div id="empty-cart" class="empty-cart" style="display: none;">
+            <i class="fas fa-shopping-cart"></i>
+            <h2>Your cart is empty</h2>
+            <a href="index.html" class="checkout-btn">Continue Shopping</a>
+        </div>
+    </div>
+
+    <!-- Shipping Address Modal -->
+    <div class="shipping-modal" id="shippingModal">
+        <div class="shipping-form-container">
+            <button class="close-shipping-modal" onclick="closeShippingModal()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="shipping-form-header">
+                <h2>
+                    <i class="fas fa-shipping-fast"></i>
+                    Shipping Address
+                </h2>
+                <p>Please provide your delivery address details</p>
+            </div>
+
+            <form class="shipping-form" id="shippingForm">
+                <!-- Personal Information -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required>
+                        <div class="form-error">Please enter your first name</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name <span class="required">*</span></label>
+                        <input type="text" id="lastName" name="lastName" required>
+                        <div class="form-error">Please enter your last name</div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="form-error">Please enter a valid email address</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" required maxlength="10">
+                        <div class="form-error">Please enter a valid 10-digit phone number</div>
+                    </div>
+                </div>
+
+                <!-- Address Information -->
+                <div class="form-group full-width">
+                    <label for="address">Street Address <span class="required">*</span></label>
+                    <textarea id="address" name="address" placeholder="House/Flat number, Building name, Street name" required></textarea>
+                    <div class="form-error">Please enter your complete address</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">City <span class="required">*</span></label>
+                        <input type="text" id="city" name="city" required>
+                        <div class="form-error">Please enter your city</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State <span class="required">*</span></label>
+                        <select id="state" name="state" required>
+                            <option value="">Select State</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                            <option value="Delhi">Delhi</option>
+                        </select>
+                        <div class="form-error">Please select your state</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="zipCode">PIN Code <span class="required">*</span></label>
+                        <input type="text" id="zipCode" name="zipCode" required maxlength="6" pattern="[0-9]{6}">
+                        <div class="form-error">Please enter a valid 6-digit PIN code</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <select id="country" name="country">
+                            <option value="India" selected>India</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Additional Instructions -->
+                <div class="form-group full-width">
+                    <label for="instructions">Delivery Instructions (Optional)</label>
+                    <textarea id="instructions" name="instructions" placeholder="Any specific delivery instructions, landmarks, etc."></textarea>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="shipping-form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeShippingModal()">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-continue">
+                        <i class="fas fa-arrow-right"></i>
+                        Continue to Payment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:4001/api';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuthAndLoadCart();
+            updateUserUI();
+        });
+
+        // Check authentication and load cart
+        async function checkAuthAndLoadCart() {
+            const userId = localStorage.getItem('userId');
+            const token = localStorage.getItem('token');
+            const userName = localStorage.getItem('userName');
+
+            console.log('Auth check:', { userId, hasToken: !!token, userName });
+
+            if (!userId || !token) {
+                showLoginRequired();
+                return;
+            }
+
+            try {
+                // Verify token is still valid
+                const authResponse = await fetch(`${API_URL}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!authResponse.ok) {
+                    console.log('Auth verification failed');
+                    localStorage.clear();
+                    showLoginRequired();
+                    return;
+                }
+
+                // Update UI to show logged-in state
+                updateUserUI(userName);
+
+                // Load cart items
+                await loadCart();
+            } catch (error) {
+                console.error('Error in auth check:', error);
+                showLoginRequired();
+            }
+        }
+
+        // Show login required message
+        function showLoginRequired() {
+            document.querySelector('.user-info').innerHTML = '<a href="auth.html"><i class="fas fa-user"></i></a>';
+
+            const cartContainer = document.getElementById('cart-items-container');
+            cartContainer.innerHTML = `
+                <div class="empty-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h2>Please login to view your cart</h2>
+                    <a href="auth.html" class="checkout-btn" style="text-decoration: none; display: inline-block; margin-top: 20px;">
+                        Login to Continue
+                    </a>
+                </div>
+            `;
+
+            // Hide summary
+            document.getElementById('cart-summary').style.display = 'none';
+        }
+
+        // Update user UI
+        function updateUserUI(userName) {
+            const userInfo = document.querySelector('.user-info');
+            if (userName) {
+                userInfo.innerHTML = `
+                    <span style="color: white; margin-right: 10px;">${userName}</span>
+                    <button onclick="logout()" style="background: none; border: none; color: white; cursor: pointer;">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                `;
+            }
+        }
+
+        // Load cart items
+        async function loadCart() {
+            const userId = localStorage.getItem('userId');
+            const token = localStorage.getItem('token');
+
+            if (!userId || !token) {
+                showLoginRequired();
+                return;
+            }
+
+            showLoading(true);
+            clearError();
+
+            try {
+                const response = await fetch(`${API_URL}/cart/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                console.log('Cart response:', data);
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to fetch cart items');
+                }
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to fetch cart items');
+                }
+
+                if (!data.carts || data.carts.length === 0) {
+                    showEmptyCart();
+                    return;
+                }
+
+                displayCart(data.carts);
+                updateCartSummary(data.summary);
+            } catch (error) {
+                console.error('Error loading cart:', error);
+                showError(error.message || 'Failed to load cart items');
+                showEmptyCart();
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function clearError() {
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.innerHTML = '';
+        }
+
+        function showError(message) {
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    ${message}
+                </div>
+            `;
+        }
+
+        function showLoading(show = true) {
+            document.getElementById('loading-container').style.display = show ? 'block' : 'none';
+            if (show) {
+                document.getElementById('cart-items-container').style.display = 'none';
+                document.getElementById('cart-summary').style.display = 'none';
+            }
+        }
+
+        function showEmptyCart() {
+            const cartContainer = document.getElementById('cart-items-container');
+            cartContainer.style.display = 'block';
+            cartContainer.innerHTML = `
+                <div class="empty-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h2>Your cart is empty</h2>
+                    <a href="index.html" class="checkout-btn" style="text-decoration: none; display: inline-block; margin-top: 20px;">
+                        Continue Shopping
+                    </a>
+                </div>
+            `;
+            document.getElementById('cart-summary').style.display = 'none';
+            document.querySelector('.cart-count').textContent = '0';
+        }
+
+        // Display cart items
+        function displayCart(items) {
+            const cartContainer = document.getElementById('cart-items-container');
+            cartContainer.style.display = 'block';
+
+            cartContainer.innerHTML = items.map(item => `
+                <div class="cart-item" data-id="${item._id}">
+                    <img src="${item.productid.imageUrl}" alt="${item.productid.productname}">
+                    <div class="item-details">
+                        <h3>${item.productid.productname}</h3>
+                        <p>${item.productid.description || 'No description available'}</p>
+                    </div>
+                    <div class="quantity-controls">
+                        <button onclick="updateQuantity('${item._id}', ${item.quantity - 1})"
+                                ${item.quantity <= 1 ? 'disabled' : ''}>-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="updateQuantity('${item._id}', ${item.quantity + 1})"
+                                ${item.quantity >= item.productid.stockQuantity ? 'disabled' : ''}>+</button>
+                    </div>
+                    <div class="price">₹${(item.productid.price * item.quantity * 83).toFixed(0)}</div>
+                    <button class="remove-btn" onclick="removeItem('${item._id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            document.getElementById('cart-summary').style.display = 'block';
+        }
+
+        // Update cart summary with INR conversion
+        function updateCartSummary(summary) {
+            const summaryContainer = document.getElementById('cart-summary');
+            summaryContainer.style.display = 'block';
+
+            // Convert USD to INR
+            const subtotalINR = summary.subtotal * 83;
+            const taxINR = summary.tax * 83;
+            const totalINR = summary.total * 83;
+
+            document.getElementById('subtotal').textContent = `₹${subtotalINR.toFixed(0)}`;
+            document.getElementById('tax').textContent = `₹${taxINR.toFixed(0)}`;
+            document.getElementById('total').textContent = `₹${totalINR.toFixed(0)}`;
+        }
+
+        // Update quantity
+        async function updateQuantity(cartId, newQuantity) {
+            if (newQuantity < 1) return;
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showLoginRequired();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/cart/${cartId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ quantity: newQuantity })
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.clear();
+                        showLoginRequired();
+                        return;
+                    }
+                    throw new Error('Failed to update quantity');
+                }
+
+                await loadCart(); // Reload cart after update
+            } catch (error) {
+                console.error('Error updating quantity:', error);
+                showError('Failed to update quantity');
+            }
+        }
+
+        // Remove item
+        async function removeItem(cartId) {
+            if (!confirm('Are you sure you want to remove this item?')) return;
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showLoginRequired();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/cart/${cartId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.clear();
+                        showLoginRequired();
+                        return;
+                    }
+                    throw new Error('Failed to remove item');
+                }
+
+                await loadCart(); // Reload cart after removal
+            } catch (error) {
+                console.error('Error removing item:', error);
+                showError('Failed to remove item');
+            }
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'auth.html';
+        }
+
+        // Handle checkout
+        document.getElementById('checkout-btn').addEventListener('click', async () => {
+            const userId = localStorage.getItem('userId');
+            const token = localStorage.getItem('token');
+
+            if (!userId || !token) {
+                showLoginRequired();
+                return;
+            }
+
+            try {
+                showLoading();
+
+                // Get cart items first
+                const cartResponse = await fetch(`${API_URL}/cart/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!cartResponse.ok) {
+                    throw new Error('Failed to fetch cart items');
+                }
+
+                const cartData = await cartResponse.json();
+                console.log('Cart data:', cartData);
+
+                if (!cartData.carts || cartData.carts.length === 0) {
+                    showError('Your cart is empty');
+                    return;
+                }
+
+                // Transform cart items to order format
+                const orderItems = cartData.carts.map(item => ({
+                    productid: item.productid._id,
+                    quantity: item.quantity
+                }));
+
+                // Show shipping address modal
+                showShippingModal();
+                return; // Exit here, form submission will handle the rest
+
+                // Create order payload
+                const orderPayload = {
+                    productids: orderItems,
+                    shippingaddress,
+                    paymentmethod: 'cod' // Default to Cash on Delivery
+                };
+
+                console.log('Placing order with payload:', orderPayload);
+
+                // Place order
+                const orderResponse = await fetch(`${API_URL}/orders/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderPayload)
+                });
+
+                const orderData = await orderResponse.json();
+                console.log('Order response:', orderData);
+
+                if (!orderResponse.ok) {
+                    throw new Error(orderData.message || 'Failed to place order');
+                }
+
+                if (!orderData.success) {
+                    throw new Error(orderData.message || 'Failed to place order');
+                }
+
+                // Show success message
+                showNotification('Order placed successfully!', 'success');
+
+                // Clear cart count
+                document.querySelector('.cart-count').textContent = '0';
+
+                // Redirect to orders page after a short delay
+                setTimeout(() => {
+                    window.location.href = 'orders.html';
+                }, 1500);
+            } catch (error) {
+                console.error('Error during checkout:', error);
+                showError(error.message || 'Failed to place order');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // Shipping Modal Functions
+        function showShippingModal() {
+            const modal = document.getElementById('shippingModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Pre-fill user data if available
+            prefillUserData();
+        }
+
+        function closeShippingModal() {
+            const modal = document.getElementById('shippingModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+
+            // Clear form errors
+            clearFormErrors();
+        }
+
+        async function prefillUserData() {
+            const userId = localStorage.getItem('userId');
+            const token = localStorage.getItem('token');
+
+            if (!userId || !token) return;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/user/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+
+                    // Pre-fill form with user data
+                    if (userData.fullname) {
+                        const nameParts = userData.fullname.split(' ');
+                        document.getElementById('firstName').value = nameParts[0] || '';
+                        document.getElementById('lastName').value = nameParts.slice(1).join(' ') || '';
+                    }
+
+                    if (userData.email) {
+                        document.getElementById('email').value = userData.email;
+                    }
+
+                    if (userData.phone) {
+                        document.getElementById('phone').value = userData.phone;
+                    }
+
+                    if (userData.city) {
+                        document.getElementById('city').value = userData.city;
+                    }
+
+                    if (userData.state) {
+                        document.getElementById('state').value = userData.state;
+                    }
+
+                    if (userData.zipCode) {
+                        document.getElementById('zipCode').value = userData.zipCode;
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        }
+
+        function validateShippingForm() {
+            const form = document.getElementById('shippingForm');
+            let isValid = true;
+
+            // Clear previous errors
+            clearFormErrors();
+
+            // Validate required fields
+            const requiredFields = [
+                { id: 'firstName', message: 'Please enter your first name' },
+                { id: 'lastName', message: 'Please enter your last name' },
+                { id: 'email', message: 'Please enter a valid email address' },
+                { id: 'phone', message: 'Please enter a valid 10-digit phone number' },
+                { id: 'address', message: 'Please enter your complete address' },
+                { id: 'city', message: 'Please enter your city' },
+                { id: 'state', message: 'Please select your state' },
+                { id: 'zipCode', message: 'Please enter a valid 6-digit PIN code' }
+            ];
+
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field.id);
+                const value = element.value.trim();
+
+                if (!value) {
+                    showFieldError(field.id, field.message);
+                    isValid = false;
+                }
+            });
+
+            // Validate email format
+            const email = document.getElementById('email').value.trim();
+            if (email && !isValidEmail(email)) {
+                showFieldError('email', 'Please enter a valid email address');
+                isValid = false;
+            }
+
+            // Validate phone number
+            const phone = document.getElementById('phone').value.trim();
+            if (phone && !isValidPhone(phone)) {
+                showFieldError('phone', 'Please enter a valid 10-digit phone number');
+                isValid = false;
+            }
+
+            // Validate PIN code
+            const zipCode = document.getElementById('zipCode').value.trim();
+            if (zipCode && !isValidPinCode(zipCode)) {
+                showFieldError('zipCode', 'Please enter a valid 6-digit PIN code');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function showFieldError(fieldId, message) {
+            const formGroup = document.getElementById(fieldId).closest('.form-group');
+            const errorElement = formGroup.querySelector('.form-error');
+
+            formGroup.classList.add('error');
+            errorElement.textContent = message;
+        }
+
+        function clearFormErrors() {
+            const errorGroups = document.querySelectorAll('.form-group.error');
+            errorGroups.forEach(group => {
+                group.classList.remove('error');
+            });
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function isValidPhone(phone) {
+            const phoneRegex = /^[0-9]{10}$/;
+            return phoneRegex.test(phone);
+        }
+
+        function isValidPinCode(pinCode) {
+            const pinRegex = /^[0-9]{6}$/;
+            return pinRegex.test(pinCode);
+        }
+
+        // Handle shipping form submission
+        document.getElementById('shippingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!validateShippingForm()) {
+                return;
+            }
+
+            // Get form data
+            const formData = new FormData(this);
+            const shippingData = {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                address: formData.get('address'),
+                city: formData.get('city'),
+                state: formData.get('state'),
+                zipCode: formData.get('zipCode'),
+                country: formData.get('country'),
+                instructions: formData.get('instructions')
+            };
+
+            // Format shipping address
+            const shippingaddress = `${shippingData.address}, ${shippingData.city}, ${shippingData.state} ${shippingData.zipCode}`;
+
+            // Close modal
+            closeShippingModal();
+
+            // Continue with checkout process
+            await processCheckoutWithShipping(shippingaddress, shippingData);
+        });
+
+        async function processCheckoutWithShipping(shippingaddress, shippingData) {
+            const userId = localStorage.getItem('userId');
+            const token = localStorage.getItem('token');
+
+            try {
+                showLoading();
+
+                // Get cart data
+                const cartResponse = await fetch(`${API_URL}/cart/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const cartData = await cartResponse.json();
+
+                if (!cartData.success || !cartData.carts || cartData.carts.length === 0) {
+                    throw new Error('Cart is empty');
+                }
+
+                // Prepare order items
+                const orderItems = cartData.carts.map(item => ({
+                    productid: item.productid._id,
+                    quantity: item.quantity
+                }));
+
+                // Create order payload
+                const orderPayload = {
+                    productids: orderItems,
+                    shippingaddress,
+                    paymentmethod: 'cod' // Default to Cash on Delivery
+                };
+
+                console.log('Placing order with payload:', orderPayload);
+
+                // Place order
+                const orderResponse = await fetch(`${API_URL}/orders/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderPayload)
+                });
+
+                const orderData = await orderResponse.json();
+                console.log('Order response:', orderData);
+
+                if (!orderResponse.ok) {
+                    throw new Error(orderData.message || 'Failed to place order');
+                }
+
+                if (!orderData.success) {
+                    throw new Error(orderData.message || 'Failed to place order');
+                }
+
+                // Show success message
+                showNotification('Order placed successfully!', 'success');
+
+                // Clear cart count
+                document.querySelector('.cart-count').textContent = '0';
+
+                // Redirect to orders page after a short delay
+                setTimeout(() => {
+                    window.location.href = 'orders.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Error during checkout:', error);
+                showError(error.message || 'Failed to place order');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            // Remove any existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+
+            // Add icon based on type
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+
+            notification.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${message}</span>
+            `;
+
+            // Add styles if not already in the document
+            if (!document.getElementById('notification-styles')) {
+                const styles = document.createElement('style');
+                styles.id = 'notification-styles';
+                styles.textContent = `
+                    .notification {
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        padding: 15px 25px;
+                        border-radius: 5px;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        z-index: 1000;
+                        animation: slideIn 0.5s ease, fadeOut 0.5s ease 2.5s;
+                        max-width: 300px;
+                    }
+
+                    .notification.info {
+                        background-color: #2D3250;
+                        color: white;
+                    }
+
+                    .notification.success {
+                        background-color: #28a745;
+                        color: white;
+                    }
+
+                    .notification.error {
+                        background-color: #dc3545;
+                        color: white;
+                    }
+
+                    @keyframes slideIn {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+
+                    @keyframes fadeOut {
+                        from {
+                            opacity: 1;
+                        }
+                        to {
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+
+            // Add to document
+            document.body.appendChild(notification);
+
+            // Remove after animation
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

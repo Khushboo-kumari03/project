@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V-!magine - Electronics Store</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1>V-!magine</h1>
+        </div>
+        <div id="login-message" style="display: none; background-color: #4CAF50; color: white; padding: 8px 15px; border-radius: 4px; margin-right: 15px; animation: fadeIn 0.5s ease;">
+            <i class="fas fa-check-circle"></i> Login successful! Redirecting...
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="active">Home</a>
+            <div class="dropdown">
+                <a href="#" class="dropbtn">Categories <i class="fas fa-chevron-down"></i></a>
+                <div class="dropdown-content">
+                    <a href="category.html?category=Laptops">Laptops</a>
+                    <a href="category.html?category=Smartphones">Smartphones</a>
+                    <a href="category.html?category=Audio">Audio</a>
+                    <a href="category.html?category=Accessories">Accessories</a>
+                    <a href="category.html?category=Gaming">Gaming</a>
+                </div>
+            </div>
+            <a href="#deals">Deals</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="profile.html" id="profile-link" style="display: none;"></a>
+        </div>
+        <div class="nav-actions">
+            <div class="search-bar">
+                <input type="text" placeholder="Search products..." autocomplete="off">
+                <button><i class="fas fa-search"></i></button>
+                <div class="search-suggestions" id="search-suggestions"></div>
+            </div>
+            <div class="user-info">
+                <!-- Guest state -->
+                <div class="guest-actions" id="guest-actions">
+                    <a href="auth.html" title="Login / Sign Up" aria-label="Login or Sign Up"><i class="fas fa-user"></i></a>
+                    <a href="admin/login.html" title="Admin Login" aria-label="Admin Login" class="admin-icon"><i class="fas fa-user-shield"></i></a>
+                </div>
+                <!-- Logged in state -->
+                <div class="user-profile" id="user-profile" style="display: none; align-items: center; cursor: pointer;">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="user-name"></span>
+                    <div class="user-dropdown" style="display: none;">
+                        <a href="profile.html">My Profile</a>
+                        <a href="orders.html">My Orders</a>
+                        <a href="#" id="admin-link" style="display: none;">Admin Panel</a>
+                        <a href="#" id="logout-link">Logout</a>
+                    </div>
+                </div>
+            </div>
+            <div class="cart-button">
+                <a href="cart.html" class="cart-link">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-text">Cart</span>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Welcome to V-!magine</h2>
+            <p>Discover the Latest in Electronics</p>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section id="products" class="products-section">
+        <h2>Featured Products</h2>
+        <div class="products-grid">
+            <!-- Product cards will be dynamically added here -->
+        </div>
+    </section>
+
+    <!-- Deals Section -->
+    <section id="deals" class="deals-section">
+        <h2>Hot Deals</h2>
+        <div class="deals-grid">
+            <!-- Deal cards will be dynamically added here -->
+        </div>
+    </section>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="close-cart"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items">
+            <!-- Cart items will be dynamically added here -->
+        </div>
+        <div class="cart-total">
+            <p>Total: $<span id="cart-total-amount">0.00</span></p>
+            <button class="checkout-button">Checkout</button>
+        </div>
+    </div>
+
+    <!-- Account Modal -->
+    <div class="account-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Account</h2>
+            <div id="login-error" style="display:none; color:#fff; background:#e74c3c; padding:10px; border-radius:5px; margin-bottom:10px; text-align:center;"></div>
+            <form id="account-form">
+                <div class="form-group">
+                    <input type="email" id="login-email" placeholder="Gmail Address" required>
+                    <small class="validation-message" id="email-validation-message">Please enter a valid Gmail address with allowed characters (a-z, A-Z, 0-9, !#$%&'*+-/=?^_`{|}~.)</small>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <small class="validation-message" id="password-validation-message">Password must contain at least 8 characters, including uppercase, lowercase, number, and special character</small>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="signup-link">Sign up</a></p>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="signup-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Create Account</h2>
+            <div id="signup-error" style="display:none; color:#fff; background:#e74c3c; padding:10px; border-radius:5px; margin-bottom:10px; text-align:center;"></div>
+            <form id="signup-form">
+                <div class="form-group">
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="fullname" placeholder="Full Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="Gmail Address" required>
+                    <small class="validation-message" id="signup-email-validation-message">Please enter a valid Gmail address with allowed characters (a-z, A-Z, 0-9, !#$%&'*+-/=?^_`{|}~.)</small>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <small class="validation-message" id="signup-password-validation-message">Password must contain at least 8 characters, including uppercase, lowercase, number, and special character</small>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" id="phone" placeholder="Phone Number (10 digits)" required maxlength="10">
+                    <small class="validation-message" id="phone-validation-message">Please enter exactly 10 digits</small>
+                </div>
+                <div class="form-group">
+                    <select id="state" required>
+                        <option value="">Select State</option>
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                        <option value="Assam">Assam</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Chhattisgarh">Chhattisgarh</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                        <option value="Jharkhand">Jharkhand</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Odisha">Odisha</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tripura">Tripura</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
+                        <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                        <option value="Chandigarh">Chandigarh</option>
+                        <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                        <option value="Ladakh">Ladakh</option>
+                        <option value="Lakshadweep">Lakshadweep</option>
+                        <option value="Puducherry">Puducherry</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="city" placeholder="Enter City Name" required disabled list="city-suggestions">
+                    <datalist id="city-suggestions">
+                        <!-- City suggestions will be populated dynamically -->
+                    </datalist>
+                    <small class="validation-message" id="city-validation-message">Please select a state first, then enter a valid city name</small>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="zipCode" placeholder="ZIP Code (6 digits)" required maxlength="6">
+                    <small class="validation-message" id="zipcode-validation-message">Please enter a valid 6-digit ZIP code</small>
+                </div>
+                <div class="form-group">
+                    <select id="country" required>
+                        <option value="India" selected>India</option>
+                        <option value="United States">United States</option>
+                        <option value="United Kingdom">United Kingdom</option>
+                        <option value="Canada">Canada</option>
+                        <option value="Australia">Australia</option>
+                        <option value="Germany">Germany</option>
+                        <option value="France">France</option>
+                        <option value="Japan">Japan</option>
+                        <option value="China">China</option>
+                        <option value="Brazil">Brazil</option>
+                        <option value="South Africa">South Africa</option>
+                        <option value="Russia">Russia</option>
+                        <option value="Italy">Italy</option>
+                        <option value="Spain">Spain</option>
+                        <option value="Netherlands">Netherlands</option>
+                        <option value="Sweden">Sweden</option>
+                        <option value="Norway">Norway</option>
+                        <option value="Denmark">Denmark</option>
+                        <option value="Switzerland">Switzerland</option>
+                        <option value="Singapore">Singapore</option>
+                    </select>
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+            <p>Already have an account? <a href="#" id="login-link">Login</a></p>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>V-!magine</h3>
+                <p>Your trusted destination for premium electronics and gadgets.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-envelope"></i> support@v-imagine.com</p>
+                <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Tech Street, Digital City</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 V-!magine. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <style>
+        /* Form validation styles */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .validation-message {
+            display: none;
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .form-group.error input {
+            border-color: #e74c3c;
+        }
+
+        .form-group.error .validation-message {
+            display: block;
+        }
+
+        .form-group.success input {
+            border-color: #2ecc71;
+        }
+
+        /* Modal styles */
+        .account-modal, .signup-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            position: relative;
+            background: #fff;
+            width: 90%;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .modal-content h2 {
+            text-align: center;
+            color: #2D3250;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        /* Form input styles */
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #2D3250;
+            background: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(45, 50, 80, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        /* Button styles */
+        .modal-content button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            background: #2D3250;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .modal-content button[type="submit"]:hover {
+            background: #424769;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(45, 50, 80, 0.2);
+        }
+
+        /* Switch between login/signup */
+        .modal-content p {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .modal-content p a {
+            color: #2D3250;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .modal-content p a:hover {
+            color: #424769;
+        }
+
+        /* Error message styles */
+        #login-error, #signup-error {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            color: #c53030;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* Form group label styles */
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2D3250;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* Select dropdown styles */
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+            padding-right: 40px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .modal-content {
+                width: 95%;
+                padding: 30px 20px;
+                margin: 20px auto;
+            }
+
+            .modal-content h2 {
+                font-size: 24px;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+        }
+
+        /* Animation for modal */
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content {
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        /* Admin icon styles */
+        .guest-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .guest-actions a {
+            color: inherit;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+
+        .guest-actions .admin-icon {
+            color: #F6B17A;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .guest-actions .admin-icon:hover {
+            transform: scale(1.1);
+            color: #e9935c;
+        }
+
+        /* Tooltip styles */
+        .guest-actions a {
+            position: relative;
+        }
+
+        .guest-actions a::after {
+            content: attr(title);
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 100;
+        }
+
+        .guest-actions a:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* User dropdown styles */
+        .user-profile {
+            position: relative;
+        }
+
+        .user-name {
+            margin-left: 5px;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            width: 150px;
+            z-index: 100;
+            margin-top: 10px;
+        }
+
+        .user-dropdown a {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .user-dropdown a:hover {
+            background-color: #f5f5f5;
+        }
+
+        .user-dropdown a#admin-link {
+            color: #F6B17A;
+            font-weight: bold;
+        }
+
+        .user-dropdown a#logout-link {
+            border-top: 1px solid #eee;
+        }
+
+        .footer {
+            background-color: #2D3250;  /* Primary color from navbar */
+            color: #fff;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+            border-top: 1px solid #424769;  /* Secondary color border */
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        .footer-section h3 {
+            color: #F6B17A;  /* Light color (orange/peach) for headings */
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        .footer-section p {
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin: 10px 0;
+        }
+
+        .footer-section ul li a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #F6B17A;  /* Light color on hover */
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 1.5em;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #F6B17A;  /* Light color on hover */
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #424769;  /* Secondary color border */
+        }
+
+        .footer-bottom p {
+            color: #fff;
+        }
+    </style>
+
+    <script src="script.js"></script>
+    <script>
+        // Check if user is logged in on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+            if (token) {
+                // Update UI for logged-in state
+                document.getElementById('guest-actions').style.display = 'none';
+                const userProfile = document.getElementById('user-profile');
+                userProfile.style.display = 'flex';
+                userProfile.querySelector('.user-name').textContent = user.username || user.fullName || user.email;
+
+                // Show admin link if user is admin
+                if (user.role === 'admin') {
+                    document.getElementById('admin-link').style.display = 'block';
+                }
+
+                // Show profile link
+                document.getElementById('profile-link').style.display = 'block';
+            }
+
+            // Toggle user dropdown
+            const userProfileElement = document.getElementById('user-profile');
+            userProfileElement.addEventListener('click', function(e) {
+                const dropdown = this.querySelector('.user-dropdown');
+                dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                e.stopPropagation();
+            });
+
+            // Close dropdown when clicking elsewhere
+            document.addEventListener('click', function() {
+                const dropdown = document.querySelector('.user-dropdown');
+                if (dropdown) {
+                    dropdown.style.display = 'none';
+                }
+            });
+
+            // Admin link
+            document.getElementById('admin-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                // Check if admin is already logged in
+                const adminToken = localStorage.getItem('adminToken');
+                if (adminToken) {
+                    window.location.href = 'admin/dashboard.html';
+                } else {
+                    window.location.href = 'admin/login.html';
+                }
+            });
+
+            // Logout link
+            document.getElementById('logout-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('user');
+                window.location.reload();
+            });
+        });
+
+        // Function to show login success message and handle redirect
+        function showLoginSuccessAndRedirect() {
+            const loginMessage = document.getElementById('login-message');
+
+            // Show the message
+            loginMessage.style.display = 'block';
+            loginMessage.style.animation = 'fadeIn 0.5s ease';
+
+            // Wait for 2 seconds then redirect
+            setTimeout(() => {
+                loginMessage.style.animation = 'fadeOut 0.5s ease';
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 500);
+            }, 2000);
+        }
+
+        // Add CSS animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+            }
+
+            #login-message {
+                transition: all 0.3s ease;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Comprehensive state to cities mapping with ALL major cities
+        const stateCitiesMap = {
+            "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool", "Rajahmundry", "Tirupati", "Kadapa", "Anantapur", "Eluru", "Ongole", "Nandyal", "Machilipatnam", "Adoni", "Tenali", "Chittoor", "Hindupur", "Proddatur", "Bhimavaram", "Madanapalle", "Guntakal", "Dharmavaram", "Gudivada", "Narasaraopet", "Tadipatri", "Mangalagiri", "Chilakaluripet", "Yemmiganur"],
+            "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat", "Tezpur", "Bomdila", "Ziro", "Along", "Changlang", "Tezu", "Khonsa", "Seppa", "Roing", "Aalo", "Daporijo", "Basar", "Yingkiong", "Anini", "Namsai", "Longding", "Koloriang"],
+            "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon", "Tinsukia", "Tezpur", "Bongaigaon", "Karimganj", "Sivasagar", "Goalpara", "Barpeta", "North Lakhimpur", "Mangaldoi", "Diphu", "Haflong", "Kokrajhar", "Dhubri", "Golaghat", "Morigaon", "Hojai", "Lanka", "Lumding", "Mariani"],
+            "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Purnia", "Darbhanga", "Bihar Sharif", "Arrah", "Begusarai", "Katihar", "Munger", "Chhapra", "Danapur", "Saharsa", "Sasaram", "Hajipur", "Dehri", "Siwan", "Motihari", "Nawada", "Bagaha", "Buxar", "Kishanganj", "Sitamarhi", "Jamalpur", "Jehanabad", "Aurangabad"],
+            "Chhattisgarh": ["Raipur", "Bhilai", "Korba", "Bilaspur", "Durg", "Rajnandgaon", "Jagdalpur", "Raigarh", "Ambikapur", "Mahasamund", "Dhamtari", "Chirmiri", "Janjgir", "Sakti", "Tilda Newra", "Mungeli", "Manendragarh", "Naila Janjgir"],
+            "Goa": ["Panaji", "Vasco da Gama", "Margao", "Mapusa", "Ponda", "Bicholim", "Curchorem", "Sanquelim", "Cuncolim", "Quepem", "Canacona", "Sanguem", "Pernem", "Sattari", "Dharbandora"],
+            "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Jamnagar", "Junagadh", "Gandhinagar", "Anand", "Navsari", "Morbi", "Nadiad", "Bharuch", "Surendranagar", "Gandhidham", "Veraval", "Godhra", "Patan", "Kalol", "Dahod", "Botad", "Amreli", "Deesa", "Jetpur"],
+            "Haryana": ["Faridabad", "Gurgaon", "Panipat", "Ambala", "Yamunanagar", "Rohtak", "Hisar", "Karnal", "Sonipat", "Panchkula", "Bhiwani", "Sirsa", "Bahadurgarh", "Jind", "Thanesar", "Kaithal", "Rewari", "Narnaul", "Pundri", "Kosli", "Palwal"],
+            "Himachal Pradesh": ["Shimla", "Dharamshala", "Solan", "Mandi", "Palampur", "Baddi", "Nahan", "Paonta Sahib", "Sundarnagar", "Chamba", "Una", "Kullu", "Hamirpur", "Bilaspur", "Kangra", "Nurpur", "Manali", "Keylong", "Reckong Peo", "Dalhousie"],
+            "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Deoghar", "Phusro", "Hazaribagh", "Giridih", "Ramgarh", "Medininagar", "Chirkunda", "Chaibasa", "Gumla", "Dumka", "Godda", "Sahebganj", "Pakur", "Chatra", "Daltonganj"],
+            "Karnataka": ["Bangalore", "Mysore", "Hubli", "Mangalore", "Belgaum", "Gulbarga", "Davanagere", "Bellary", "Bijapur", "Shimoga", "Tumkur", "Raichur", "Bidar", "Hospet", "Hassan", "Gadag", "Udupi", "Robertsonpet", "Bhadravati", "Chitradurga", "Kolar", "Mandya", "Chikmagalur", "Gangavati", "Bagalkot"],
+            "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kollam", "Palakkad", "Alappuzha", "Malappuram", "Kannur", "Kasaragod", "Kottayam", "Pathanamthitta", "Idukki", "Wayanad", "Ernakulam", "Thalassery", "Payyanur", "Kanhangad", "Nilambur", "Manjeri", "Perinthalmanna", "Tirur", "Ponnani", "Vatakara", "Koyilandy"],
+            "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Jabalpur", "Ujjain", "Sagar", "Dewas", "Satna", "Ratlam", "Rewa", "Murwara", "Singrauli", "Burhanpur", "Khandwa", "Bhind", "Chhindwara", "Guna", "Shivpuri", "Vidisha", "Chhatarpur", "Damoh", "Mandsaur", "Khargone", "Neemuch"],
+            "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik", "Aurangabad", "Solapur", "Amravati", "Kolhapur", "Sangli", "Malegaon", "Akola", "Latur", "Dhule", "Ahmednagar", "Chandrapur", "Parbhani", "Ichalkaranji", "Jalgaon", "Bhusawal", "Panvel", "Badlapur", "Beed", "Gondia", "Satara", "Barshi", "Yavatmal", "Achalpur", "Osmanabad", "Nandurbar", "Wardha", "Udgir", "Hinganghat"],
+            "Manipur": ["Imphal", "Thoubal", "Bishnupur", "Churachandpur", "Kakching", "Ukhrul", "Senapati", "Tamenglong", "Jiribam", "Kangpokpi", "Tengnoupal", "Kamjong", "Noney", "Pherzawl", "Chandel"],
+            "Meghalaya": ["Shillong", "Tura", "Jowai", "Nongpoh", "Baghmara", "Ampati", "Resubelpara", "Mawkyrwat", "Williamnagar", "Khliehriat", "Nongstoin", "Mairang", "Cherrapunji", "Dawki", "Bholaganj"],
+            "Mizoram": ["Aizawl", "Lunglei", "Saiha", "Champhai", "Kolasib", "Serchhip", "Lawngtlai", "Mamit", "Bairabi", "Vairengte", "Tlabung", "Hnahthial", "Saitual", "Khawzawl"],
+            "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Tuensang", "Wokha", "Zunheboto", "Phek", "Kiphire", "Longleng", "Peren", "Mon", "Noklak"],
+            "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Sambalpur", "Puri", "Balasore", "Bhadrak", "Baripada", "Jharsuguda", "Jeypore", "Barbil", "Khordha", "Sunabeda", "Rayagada", "Kendujhar", "Jagatsinghpur", "Paradeep", "Talcher", "Kendrapara", "Bhawanipatna", "Dhenkanal"],
+            "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda", "Mohali", "Firozpur", "Batala", "Pathankot", "Moga", "Abohar", "Malerkotla", "Khanna", "Phagwara", "Muktsar", "Barnala", "Rajpura", "Hoshiarpur", "Kapurthala", "Faridkot", "Sunam"],
+            "Rajasthan": ["Jaipur", "Jodhpur", "Kota", "Bikaner", "Ajmer", "Udaipur", "Bhilwara", "Alwar", "Bharatpur", "Sikar", "Pali", "Sri Ganganagar", "Kishangarh", "Baran", "Dhaulpur", "Tonk", "Beawar", "Hanumangarh", "Gangapur City", "Banswara", "Makrana", "Sujangarh", "Jhunjhunu", "Lachhmangarh"],
+            "Sikkim": ["Gangtok", "Namchi", "Geyzing", "Mangan", "Jorethang", "Nayabazar", "Rangpo", "Singtam", "Pakyong", "Ravangla", "Yuksom", "Pelling", "Lachung", "Lachen"],
+            "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Tirunelveli", "Tiruppur", "Vellore", "Erode", "Thoothukkudi", "Dindigul", "Thanjavur", "Ranipet", "Sivakasi", "Karur", "Udhagamandalam", "Hosur", "Nagercoil", "Kanchipuram", "Kumarakoil", "Pudukkottai", "Vaniyambadi", "Ambur", "Nagapattinam"],
+            "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Khammam", "Karimnagar", "Ramagundam", "Mahbubnagar", "Nalgonda", "Adilabad", "Suryapet", "Miryalaguda", "Jagtial", "Mancherial", "Nirmal", "Kothagudem", "Bodhan", "Sangareddy", "Metpally", "Zaheerabad", "Medak", "Siddipet", "Vikarabad", "Wanaparthy", "Narayanpet"],
+            "Tripura": ["Agartala", "Dharmanagar", "Udaipur", "Kailasahar", "Belonia", "Khowai", "Ambassa", "Ranir Bazar", "Sonamura", "Kumarghat", "Sabroom", "Bishalgarh", "Teliamura", "Jirania", "Mohanpur"],
+            "Uttar Pradesh": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Varanasi", "Meerut", "Allahabad", "Bareilly", "Aligarh", "Moradabad", "Saharanpur", "Gorakhpur", "Noida", "Firozabad", "Jhansi", "Muzaffarnagar", "Mathura", "Rampur", "Shahjahanpur", "Farrukhabad", "Mau", "Hapur", "Etawah", "Mirzapur", "Bulandshahr", "Sambhal", "Amroha", "Hardoi", "Fatehpur", "Raebareli"],
+            "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Haldwani", "Rudrapur", "Kashipur", "Rishikesh", "Kotdwar", "Pithoragarh", "Almora", "Mussoorie", "Nainital", "Tehri", "Pauri", "Bageshwar", "Champawat", "Rudraprayag", "Uttarkashi", "Chamoli"],
+            "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Asansol", "Siliguri", "Bardhaman", "Malda", "Baharampur", "Habra", "Kharagpur", "Shantipur", "Dankuni", "Dhulian", "Ranaghat", "Haldia", "Raiganj", "Krishnanagar", "Nabadwip", "Medinipur", "Jalpaiguri", "Balurghat", "Basirhat", "Bankura", "Chakdaha", "Darjeeling", "Alipurduar", "Purulia", "Jangipur"],
+            "Andaman and Nicobar Islands": ["Port Blair", "Bamboo Flat", "Garacharma", "Diglipur", "Mayabunder", "Rangat", "Campbell Bay", "Car Nicobar", "Hut Bay", "Nancowry", "Baratang", "Neil Island", "Havelock Island", "Little Andaman", "Great Nicobar"],
+            "Chandigarh": ["Chandigarh", "Mani Majra", "Dhanas"],
+            "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Silvassa", "Dadra", "Nagar Haveli", "Vapi", "Naroli", "Rakholi", "Dudhani", "Samarvarni"],
+            "Delhi": ["New Delhi", "Delhi Cantonment", "Narela", "Najafgarh", "Alipur", "Mehrauli", "Karol Bagh", "Rohini", "Dwarka", "Vasant Kunj", "Shahdara", "Seemapuri", "Yamuna Vihar", "Laxmi Nagar", "Janakpuri", "Rajouri Garden", "Pitampura", "Preet Vihar", "Mayur Vihar", "Kalkaji", "Saket", "Hauz Khas", "Lajpat Nagar", "Khan Market", "Connaught Place"],
+            "Jammu and Kashmir": ["Srinagar", "Jammu", "Baramulla", "Anantnag", "Sopore", "Kathua", "Udhampur", "Punch", "Rajouri", "Kupwara", "Handwara", "Kulgam", "Bandipora", "Ganderbal", "Budgam", "Pulwama", "Shopian", "Doda", "Kishtwar", "Ramban", "Reasi", "Samba"],
+            "Ladakh": ["Leh", "Kargil", "Nubra", "Zanskar", "Changthang", "Sham", "Rupshu", "Dras", "Sankoo", "Turtuk", "Diskit", "Panamik", "Khardung", "Hemis", "Thiksey"],
+            "Lakshadweep": ["Kavaratti", "Agatti", "Minicoy", "Amini", "Andrott", "Kalpeni", "Kadmat", "Kiltan", "Chetlat", "Bitra", "Bangaram", "Thinnakara"],
+            "Puducherry": ["Puducherry", "Karaikal", "Mahe", "Yanam", "Villianur", "Ariyankuppam", "Bahour", "Nettapakkam", "Mannadipet", "Ozhukarai", "Mudaliarpet", "Oulgaret", "Embalam", "Kirumampakkam"]
+        };
+
+        // Validation functions
+        function isValidZipCode(zipCode) {
+            const zipRegex = /^\d{6}$/;
+            return zipRegex.test(zipCode);
+        }
+
+        function isValidStreetAddress(street) {
+            return street.trim().length >= 5;
+        }
+
+        // Street address suggestions based on city/state
+        const streetSuggestions = {
+            // Maharashtra
+            "Mumbai": ["Linking Road, Bandra", "Carter Road, Bandra", "Marine Drive", "Colaba Causeway", "Juhu Beach Road", "Andheri East", "Powai", "Worli Sea Face", "Nariman Point", "Fort"],
+            "Pune": ["FC Road", "MG Road", "JM Road", "Koregaon Park", "Hinjewadi", "Baner Road", "Aundh", "Viman Nagar", "Kothrud", "Deccan"],
+            "Nagpur": ["Civil Lines", "Dharampeth", "Sadar", "Sitabuldi", "Ramdaspeth", "Mahal", "Gandhibagh", "Bajaj Nagar", "Medical Square", "Wardha Road"],
+
+            // Karnataka
+            "Bangalore": ["Brigade Road", "Commercial Street", "Koramangala", "Indiranagar", "Whitefield", "Electronic City", "Jayanagar", "Malleshwaram", "Rajajinagar", "HSR Layout"],
+            "Mysore": ["Sayyaji Rao Road", "Ashoka Road", "JLB Road", "Kalidasa Road", "Vinoba Road", "Hunsur Road", "Bannur Road", "Bogadi Road", "Ring Road", "Lalitha Mahal Road"],
+
+            // Tamil Nadu
+            "Chennai": ["Anna Salai", "T Nagar", "Adyar", "Velachery", "OMR", "ECR", "Nungambakkam", "Mylapore", "Besant Nagar", "Alwarpet"],
+            "Coimbatore": ["RS Puram", "Race Course Road", "Avinashi Road", "Trichy Road", "Sathy Road", "Mettupalayam Road", "Pollachi Road", "Palakkad Road", "Brookefields", "Saibaba Colony"],
+
+            // Delhi
+            "New Delhi": ["Connaught Place", "Khan Market", "Lajpat Nagar", "Karol Bagh", "Rajouri Garden", "Saket", "Vasant Kunj", "Greater Kailash", "Defence Colony", "Lodi Road"],
+            "Delhi Cantonment": ["Dhaula Kuan", "Delhi Cantt", "Shankar Road", "Brar Square", "AFS Palam", "IGI Airport Road", "Mahipalpur", "Vasant Vihar", "RK Puram", "Munirka"],
+
+            // West Bengal
+            "Kolkata": ["Park Street", "Camac Street", "AJC Bose Road", "Rashbehari Avenue", "Gariahat Road", "Ballygunge", "Salt Lake", "New Town", "Howrah Bridge", "Esplanade"],
+
+            // Gujarat
+            "Ahmedabad": ["CG Road", "SG Highway", "Ashram Road", "Relief Road", "Law Garden", "Satellite", "Vastrapur", "Bopal", "Prahlad Nagar", "Navrangpura"],
+            "Surat": ["Ring Road", "City Light", "Adajan", "Vesu", "Pal", "Rander Road", "Udhna", "Katargam", "Piplod", "Althan"],
+
+            // Rajasthan
+            "Jaipur": ["MI Road", "Tonk Road", "Ajmer Road", "JLN Marg", "Malviya Nagar", "Vaishali Nagar", "C Scheme", "Bani Park", "Civil Lines", "Mansarovar"],
+            "Jodhpur": ["High Court Road", "Residency Road", "Circuit House Road", "Chopasni Road", "Pal Road", "Sardarpura", "Ratanada", "Shastri Nagar", "Paota", "Basni"],
+
+            // Haryana
+            "Gurgaon": ["MG Road", "Golf Course Road", "Sohna Road", "NH-8", "Cyber City", "DLF Phase 1", "Sector 14", "Udyog Vihar", "Huda City Centre", "Old Gurgaon"],
+            "Faridabad": ["Mathura Road", "Delhi-Mathura Road", "Sector 16", "NIT", "Old Faridabad", "Ballabgarh", "Sector 21", "NHPC Chowk", "Ajronda Chowk", "Neelam Chowk"],
+
+            // Uttar Pradesh
+            "Lucknow": ["Hazratganj", "Gomti Nagar", "Indira Nagar", "Aliganj", "Mahanagar", "Alambagh", "Chowk", "Aminabad", "Rajajipuram", "Vikas Nagar"],
+            "Kanpur": ["Mall Road", "Civil Lines", "Swaroop Nagar", "Kidwai Nagar", "Govind Nagar", "Kalyanpur", "Barra", "Kakadeo", "Panki", "Shyam Nagar"],
+
+            // Telangana
+            "Hyderabad": ["Banjara Hills", "Jubilee Hills", "HITEC City", "Gachibowli", "Kondapur", "Madhapur", "Begumpet", "Secunderabad", "Ameerpet", "Kukatpally"]
+        };
+
+        // City validation function
+        function isValidCity(cityName, selectedState) {
+            if (!selectedState || !cityName) return false;
+            const cities = stateCitiesMap[selectedState] || [];
+            return cities.some(city => city.toLowerCase() === cityName.toLowerCase());
+        }
+
+        // Update city suggestions based on selected state
+        function updateCities(selectedState) {
+            const cityInput = document.getElementById('city');
+            const cityDatalist = document.getElementById('city-suggestions');
+            const cities = stateCitiesMap[selectedState] || [];
+
+            // Clear existing suggestions
+            cityDatalist.innerHTML = '';
+
+            if (cities.length > 0) {
+                cityInput.disabled = false;
+                cityInput.placeholder = 'Enter City Name';
+
+                // Add all cities as suggestions
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    cityDatalist.appendChild(option);
+                });
+
+                document.getElementById('city-validation-message').textContent = 'Enter a valid city name from ' + selectedState;
+            } else {
+                cityInput.disabled = true;
+                cityInput.placeholder = 'No cities available';
+                document.getElementById('city-validation-message').textContent = 'No cities available for selected state';
+            }
+
+            // Clear city input and street suggestions when state changes
+            cityInput.value = '';
+            updateStreetSuggestions('');
+        }
+
+        // Update street suggestions based on selected city
+        function updateStreetSuggestions(selectedCity) {
+            const streetDatalist = document.getElementById('street-suggestions');
+            const suggestions = streetSuggestions[selectedCity] || [];
+
+            // Clear existing suggestions
+            streetDatalist.innerHTML = '';
+
+            // Add new suggestions
+            suggestions.forEach(street => {
+                const option = document.createElement('option');
+                option.value = street;
+                streetDatalist.appendChild(option);
+            });
+        }
+
+        // Enhanced street address validation
+        function isValidStreetAddress(street) {
+            const trimmedStreet = street.trim();
+
+            // Basic length check
+            if (trimmedStreet.length < 5) {
+                return false;
+            }
+
+            // Check for common invalid patterns
+            const invalidPatterns = [
+                /^[0-9]+$/, // Only numbers
+                /^[a-zA-Z]$/, // Single character
+                /^\s*$/, // Only whitespace
+                /^(.)\1{4,}$/ // Repeated characters (aaaaa)
+            ];
+
+            for (let pattern of invalidPatterns) {
+                if (pattern.test(trimmedStreet)) {
+                    return false;
+                }
+            }
+
+            // Must contain at least one letter
+            if (!/[a-zA-Z]/.test(trimmedStreet)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        // Email validation function with specific allowed characters
+        function isValidEmail(email) {
+            // Allowed characters: a-z, A-Z, 0-9, and special characters: !#$%&'*+-/=?^_`{|}~.
+            const emailRegex = /^[a-zA-Z0-9!#$%&'*+\-\/=?^_`{|}~.]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        }
+
+        // Gmail validation function (for specific Gmail requirement)
+        function isValidGmail(email) {
+            const gmailRegex = /^[a-zA-Z0-9!#$%&'*+\-\/=?^_`{|}~.]+@gmail\.com$/;
+            return gmailRegex.test(email);
+        }
+
+        // Password validation function
+        function isValidPassword(password) {
+            // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            return passwordRegex.test(password);
+        }
+
+        // Phone number validation function (exactly 10 digits)
+        function isValidPhoneNumber(phone) {
+            const phoneRegex = /^\d{10}$/;
+            return phoneRegex.test(phone);
+        }
+
+        // Set form field validation status
+        function setFieldValidationStatus(field, isValid, validationMessageId) {
+            const formGroup = field.parentElement;
+            const validationMessage = document.getElementById(validationMessageId);
+
+            if (isValid) {
+                formGroup.classList.remove('error');
+                formGroup.classList.add('success');
+            } else {
+                formGroup.classList.remove('success');
+                formGroup.classList.add('error');
+            }
+        }
+
+        // Add input event listeners for login form
+        document.getElementById('login-email').addEventListener('input', function() {
+            setFieldValidationStatus(this, isValidGmail(this.value), 'email-validation-message');
+        });
+
+        document.getElementById('login-password').addEventListener('input', function() {
+            setFieldValidationStatus(this, isValidPassword(this.value), 'password-validation-message');
+        });
+
+        // Add input event listeners for signup form
+        document.getElementById('email').addEventListener('input', function() {
+            setFieldValidationStatus(this, isValidGmail(this.value), 'signup-email-validation-message');
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            setFieldValidationStatus(this, isValidPassword(this.value), 'signup-password-validation-message');
+        });
+
+        document.getElementById('phone').addEventListener('input', function() {
+            setFieldValidationStatus(this, isValidPhoneNumber(this.value), 'phone-validation-message');
+        });
+
+        // Add event listener for state selection
+        document.getElementById('state').addEventListener('change', function() {
+            updateCities(this.value);
+        });
+
+        // Add event listener for city input validation
+        document.getElementById('city').addEventListener('input', function() {
+            const selectedState = document.getElementById('state').value;
+            const cityName = this.value.trim();
+
+            if (cityName && selectedState) {
+                const isValid = isValidCity(cityName, selectedState);
+                setFieldValidationStatus(this, isValid, 'city-validation-message');
+
+                if (isValid) {
+                    updateStreetSuggestions(cityName);
+                    document.getElementById('city-validation-message').textContent = 'Valid city selected';
+                } else {
+                    updateStreetSuggestions('');
+                    document.getElementById('city-validation-message').textContent = 'Please enter a valid city name from ' + selectedState;
+                }
+            } else if (selectedState) {
+                document.getElementById('city-validation-message').textContent = 'Enter a valid city name from ' + selectedState;
+            }
+        });
+
+        // Add validation for ZIP code
+        document.getElementById('zipCode').addEventListener('input', function() {
+            setFieldValidationStatus(this, isValidZipCode(this.value), 'zipcode-validation-message');
+        });
+
+        // Add validation for street address
+        document.getElementById('street').addEventListener('input', function() {
+            setFieldValidationStatus(this, isValidStreetAddress(this.value), 'street-validation-message');
+        });
+
+        // Update the login form submission handler
+        document.getElementById('account-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const errorDiv = document.getElementById('login-error');
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            // Validate email (Gmail only)
+            if (!isValidGmail(email)) {
+                errorDiv.textContent = 'Please enter a valid Gmail address (example@gmail.com)';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Validate password
+            if (!isValidPassword(password)) {
+                errorDiv.textContent = 'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:4001/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store user data in localStorage consistently
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('userId', data.user.id || data.user._id);
+                    localStorage.setItem('userEmail', data.user.email);
+                    localStorage.setItem('userName', data.user.username || data.user.fullName);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    // Close the modal
+                    document.querySelector('.account-modal').style.display = 'none';
+
+                    // Update UI for logged-in state
+                    document.getElementById('guest-actions').style.display = 'none';
+                    const userProfile = document.getElementById('user-profile');
+                    userProfile.style.display = 'flex';
+                    userProfile.querySelector('.user-name').textContent = data.user.username || data.user.fullName || data.user.email;
+
+                    // Show admin link if user is admin
+                    if (data.user.role === 'admin') {
+                        document.getElementById('admin-link').style.display = 'block';
+                    }
+
+                    // Show success message and redirect after 2 seconds
+                    showLoginSuccessAndRedirect();
+                } else {
+                    errorDiv.textContent = data.message || 'Login failed';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorDiv.textContent = 'An error occurred during login';
+                errorDiv.style.display = 'block';
+            }
+        });
+
+        // Add signup form submission handler
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const errorDiv = document.getElementById('signup-error');
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            // Validate email (Gmail only)
+            if (!isValidGmail(email)) {
+                errorDiv.textContent = 'Please enter a valid Gmail address (example@gmail.com)';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Validate password
+            if (!isValidPassword(password)) {
+                errorDiv.textContent = 'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Passwords do not match!';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Validate phone number (exactly 10 digits)
+            const phone = document.getElementById('phone').value;
+            if (!isValidPhoneNumber(phone)) {
+                errorDiv.textContent = 'Phone number must be exactly 10 digits';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Validate ZIP code
+            const zipCode = document.getElementById('zipCode').value;
+            if (!isValidZipCode(zipCode)) {
+                errorDiv.textContent = 'ZIP code must be exactly 6 digits';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Validate state selection
+            const state = document.getElementById('state').value;
+            if (!state) {
+                errorDiv.textContent = 'Please select a state';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Validate city input
+            const city = document.getElementById('city').value.trim();
+            if (!city) {
+                errorDiv.textContent = 'Please enter a city name';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            if (!isValidCity(city, state)) {
+                errorDiv.textContent = 'Please enter a valid city name from ' + state;
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Validate country selection
+            const country = document.getElementById('country').value;
+            if (!country) {
+                errorDiv.textContent = 'Please select a country';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Check if email already exists
+            try {
+                const emailCheckResponse = await fetch('http://localhost:4001/api/auth/check-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+
+                const emailCheckData = await emailCheckResponse.json();
+
+                if (emailCheckResponse.ok && emailCheckData.exists) {
+                    errorDiv.textContent = 'This email is already registered. Please use a different email or try logging in.';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+            } catch (error) {
+                console.error('Error checking email:', error);
+                // Continue with signup if email check fails
+            }
+
+            const userData = {
+                username: document.getElementById('username').value,
+                email: email,
+                password: password,
+                fullName: document.getElementById('fullname').value,
+                phoneNumber: document.getElementById('phone').value,
+                address: {
+                    city: document.getElementById('city').value,
+                    state: document.getElementById('state').value,
+                    zipCode: document.getElementById('zipCode').value,
+                    country: document.getElementById('country').value
+                }
+            };
+
+            try {
+                const response = await fetch('http://localhost:4001/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store user data in localStorage
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('userId', data.user.id || data.user._id);
+                    localStorage.setItem('userEmail', data.user.email);
+                    localStorage.setItem('userName', data.user.username || data.user.fullName);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    // Close the modal
+                    document.querySelector('.signup-modal').style.display = 'none';
+
+                    // Update UI for logged-in state
+                    document.getElementById('guest-actions').style.display = 'none';
+                    const userProfile = document.getElementById('user-profile');
+                    userProfile.style.display = 'flex';
+                    userProfile.querySelector('.user-name').textContent = data.user.username || data.user.fullName || data.user.email;
+
+                    // Show admin link if user is admin
+                    if (data.user.role === 'admin') {
+                        document.getElementById('admin-link').style.display = 'block';
+                    }
+
+                    // Show success message and redirect
+                    showLoginSuccessAndRedirect();
+                } else {
+                    errorDiv.textContent = data.message || 'Signup failed';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                errorDiv.textContent = 'An error occurred during signup';
+                errorDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

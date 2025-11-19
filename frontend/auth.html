@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Sign Up - V-!magine</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2D3250 0%, #424769 50%, #7077A1 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .auth-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .auth-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .cool-auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.15),
+                0 10px 25px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            z-index: 1;
+            animation: slideInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .cool-auth-card.fullscreen {
+            max-width: 95vw;
+            width: 95vw;
+            max-height: 95vh;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .signup-grid {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .signup-grid.active {
+            display: grid;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2D3250;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #F6B17A;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .brand-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .brand-title {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #F6B17A 0%, #7077A1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-subtitle {
+            color: #666;
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        .cool-auth-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #2D3250 0%, #424769 100%);
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            box-shadow: 0 10px 30px rgba(45, 50, 80, 0.3);
+        }
+
+        .cool-auth-icon .fa {
+            font-size: 32px;
+            color: white;
+        }
+
+        .cool-auth-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 40px;
+            background: rgba(45, 50, 80, 0.1);
+            border-radius: 50px;
+            padding: 5px;
+            position: relative;
+        }
+
+        .cool-auth-tab {
+            background: none;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2D3250;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            text-align: center;
+        }
+
+        .cool-auth-tab.active {
+            color: white;
+            background: linear-gradient(135deg, #2D3250 0%, #424769 100%);
+            box-shadow: 0 5px 15px rgba(45, 50, 80, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .cool-auth-tab:hover:not(.active) {
+            color: #424769;
+            background: rgba(45, 50, 80, 0.1);
+        }
+        .cool-auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2D3250;
+            margin-bottom: 8px;
+            display: block;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(45, 50, 80, 0.2);
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background: rgba(255, 255, 255, 0.9);
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #2D3250;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(45, 50, 80, 0.1);
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+            font-weight: 400;
+        }
+
+        .form-group input:hover:not(:focus) {
+            border-color: rgba(45, 50, 80, 0.4);
+            transform: translateY(-1px);
+        }
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            margin: -10px 0 10px 0;
+            color: #666;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            accent-color: #2D3250;
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            color: #7077A1;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: #2D3250;
+            text-decoration: underline;
+        }
+
+        .auth-button {
+            background: linear-gradient(135deg, #2D3250 0%, #424769 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 18px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 8px 25px rgba(45, 50, 80, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .auth-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(45, 50, 80, 0.4);
+        }
+
+        .auth-button:hover::before {
+            left: 100%;
+        }
+
+        .auth-button:active {
+            transform: translateY(-1px);
+        }
+        .address-fields {
+            display: grid;
+            gap: 15px;
+        }
+
+        .address-fields input,
+        .address-fields select {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 1200px) {
+            .cool-auth-card.fullscreen {
+                max-width: 90vw;
+                padding: 25px;
+            }
+
+            .signup-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .auth-wrapper {
+                padding: 10px;
+            }
+
+            .cool-auth-card {
+                padding: 30px 20px;
+                border-radius: 15px;
+            }
+
+            .cool-auth-card.fullscreen {
+                max-width: 100vw;
+                width: 100vw;
+                border-radius: 0;
+                min-height: 100vh;
+                padding: 20px;
+            }
+
+            .brand-title {
+                font-size: 28px;
+            }
+
+            .cool-auth-tabs {
+                margin-bottom: 30px;
+                padding: 3px;
+            }
+
+            .cool-auth-tab {
+                font-size: 15px;
+                padding: 12px 20px;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 14px 16px;
+                font-size: 16px;
+            }
+
+            .auth-button {
+                padding: 16px 20px;
+                font-size: 16px;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+        }
+        /* Validation message styles */
+        .validation-message {
+            display: none;
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: 8px;
+            font-weight: 500;
+            padding: 8px 12px;
+            background: rgba(229, 62, 62, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid #e53e3e;
+        }
+
+        .form-group.error input,
+        .form-group.error select {
+            border-color: #e53e3e;
+            box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+        }
+
+        .form-group.error .validation-message {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .form-group.success input,
+        .form-group.success select {
+            border-color: #38a169;
+            box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.1);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Error and Success message styles */
+        #error-message, #success-message {
+            margin-bottom: 25px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            opacity: 1;
+            transition: all 0.3s ease;
+            animation: slideDown 0.3s ease;
+        }
+
+        #error-message {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            color: #c53030;
+            border: 2px solid #fc8181;
+        }
+
+        #success-message {
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            color: #2f855a;
+            border: 2px solid #68d391;
+        }
+
+        /* Back button hover effect */
+        .back-home-btn:hover {
+            color: #2D3250 !important;
+            transform: translateX(-3px);
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="cool-auth-card" id="auth-card">
+            <div class="brand-header">
+                <div class="cool-auth-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h1 class="brand-title">V-!magine</h1>
+                <p class="brand-subtitle">Your Electronics Store</p>
+            </div>
+
+            <div class="cool-auth-tabs">
+                <button id="login-tab" class="cool-auth-tab active">Login</button>
+                <button id="signup-tab" class="cool-auth-tab">Sign Up</button>
+            </div>
+
+            <div id="error-message" class="error-message" style="display: none;"></div>
+            <div id="success-message" class="success-message" style="display: none;"></div>
+
+            <!-- Back to Home Button -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <a href="index.html" class="back-home-btn" style="color: #7077A1; text-decoration: none; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Home
+                </a>
+            </div>
+        <form id="login-form" class="cool-auth-form">
+            <div class="form-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" name="password" required>
+            </div>
+            <div class="form-options">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember">
+                    Remember me
+                </label>
+                <a href="#" class="forgot-password">Forgot Password?</a>
+            </div>
+            <button type="submit" class="auth-button">Login</button>
+        </form>
+        <div id="signup-form" class="signup-grid" style="display: none;">
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-user-circle"></i>
+                    Personal Information
+                </h3>
+                <div class="cool-auth-form">
+                    <div class="form-group">
+                        <label for="signup-username">Username</label>
+                        <input type="text" id="signup-username" name="username" placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-fullname">Full Name</label>
+                        <input type="text" id="signup-fullname" name="fullName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email Address</label>
+                        <input type="email" id="signup-email" name="email" placeholder="Enter your Gmail address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-phone">Phone Number</label>
+                        <input type="text" id="signup-phone" name="phoneNumber" placeholder="Enter 10-digit phone number" required maxlength="10">
+                        <small class="validation-message" id="phone-validation-message">Please enter exactly 10 digits</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-lock"></i>
+                    Security
+                </h3>
+                <div class="cool-auth-form">
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" name="password" placeholder="Create a strong password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Address Information
+                </h3>
+                <div class="cool-auth-form">
+                    <div class="form-group">
+                        <label for="signup-state">State</label>
+                        <select id="signup-state" required>
+                            <option value="">Select State</option>
+                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                    <option value="Assam">Assam</option>
+                    <option value="Bihar">Bihar</option>
+                    <option value="Chhattisgarh">Chhattisgarh</option>
+                    <option value="Goa">Goa</option>
+                    <option value="Gujarat">Gujarat</option>
+                    <option value="Haryana">Haryana</option>
+                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                    <option value="Jharkhand">Jharkhand</option>
+                    <option value="Karnataka">Karnataka</option>
+                    <option value="Kerala">Kerala</option>
+                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Manipur">Manipur</option>
+                    <option value="Meghalaya">Meghalaya</option>
+                    <option value="Mizoram">Mizoram</option>
+                    <option value="Nagaland">Nagaland</option>
+                    <option value="Odisha">Odisha</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Rajasthan">Rajasthan</option>
+                    <option value="Sikkim">Sikkim</option>
+                    <option value="Tamil Nadu">Tamil Nadu</option>
+                    <option value="Telangana">Telangana</option>
+                    <option value="Tripura">Tripura</option>
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                    <option value="Uttarakhand">Uttarakhand</option>
+                    <option value="West Bengal">West Bengal</option>
+                    <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                    <option value="Chandigarh">Chandigarh</option>
+                    <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                    <option value="Ladakh">Ladakh</option>
+                    <option value="Lakshadweep">Lakshadweep</option>
+                    <option value="Puducherry">Puducherry</option>
+                </select>
+                    <div class="form-group">
+                        <label for="signup-city">City</label>
+                        <input type="text" id="signup-city" placeholder="Enter City Name" required disabled list="signup-city-suggestions">
+                        <datalist id="signup-city-suggestions">
+                            <!-- City suggestions will be populated dynamically -->
+                        </datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-zip">ZIP Code</label>
+                        <input type="text" id="signup-zip" placeholder="Enter 6-digit ZIP code" required maxlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-country">Country</label>
+                        <select id="signup-country" required>
+                            <option value="India" selected>India</option>
+                            <option value="United States">United States</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Germany">Germany</option>
+                            <option value="France">France</option>
+                            <option value="Japan">Japan</option>
+                            <option value="China">China</option>
+                            <option value="Brazil">Brazil</option>
+                            <option value="South Africa">South Africa</option>
+                            <option value="Russia">Russia</option>
+                            <option value="Italy">Italy</option>
+                            <option value="Spain">Spain</option>
+                            <option value="Netherlands">Netherlands</option>
+                            <option value="Sweden">Sweden</option>
+                            <option value="Norway">Norway</option>
+                            <option value="Denmark">Denmark</option>
+                            <option value="Switzerland">Switzerland</option>
+                            <option value="Singapore">Singapore</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section" style="grid-column: 1 / -1;">
+                <div style="text-align: center;">
+                    <button type="submit" class="auth-button" style="width: 100%; max-width: 300px;">
+                        <i class="fas fa-user-plus" style="margin-right: 8px;"></i>
+                        Create Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script>
+        // Tab switching logic
+        const loginTab = document.getElementById('login-tab');
+        const signupTab = document.getElementById('signup-tab');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+
+        // Email validation function with specific allowed characters
+        function isValidEmail(email) {
+            // Allowed characters: a-z, A-Z, 0-9, and special characters: !#$%&'*+-/=?^_`{|}~.
+            const emailRegex = /^[a-zA-Z0-9!#$%&'*+\-\/=?^_`{|}~.]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        }
+
+        // Gmail validation function (for specific Gmail requirement)
+        function isValidGmail(email) {
+            const gmailRegex = /^[a-zA-Z0-9!#$%&'*+\-\/=?^_`{|}~.]+@gmail\.com$/;
+            return gmailRegex.test(email);
+        }
+
+        // Phone number validation function (exactly 10 digits)
+        function isValidPhoneNumber(phone) {
+            const phoneRegex = /^\d{10}$/;
+            return phoneRegex.test(phone);
+        }
+
+        // Add phone number validation
+        document.getElementById('signup-phone').addEventListener('input', function() {
+            const phoneValidationMessage = document.getElementById('phone-validation-message');
+            if (isValidPhoneNumber(this.value) || this.value === '') {
+                this.style.borderColor = '';
+                phoneValidationMessage.style.display = 'none';
+            } else {
+                this.style.borderColor = '#f44336';
+                phoneValidationMessage.style.display = 'block';
+            }
+        });
+        const authCard = document.getElementById('auth-card');
+
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('active');
+            signupTab.classList.remove('active');
+            loginForm.style.display = 'flex';
+            signupForm.style.display = 'none';
+            signupForm.classList.remove('active');
+            authCard.classList.remove('fullscreen');
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+        });
+
+        signupTab.addEventListener('click', () => {
+            signupTab.classList.add('active');
+            loginTab.classList.remove('active');
+            signupForm.style.display = 'grid';
+            signupForm.classList.add('active');
+            loginForm.style.display = 'none';
+            authCard.classList.add('fullscreen');
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+        });
+
+        // LOGIN API CALL
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            // Validate email format
+            if (!isValidGmail(email)) {
+                errorMessage.textContent = 'Please enter a valid Gmail address with allowed characters (a-z, A-Z, 0-9, !#$%&\'*+-/=?^_`{|}~.)';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            try {
+                // Show loading state
+                const submitButton = loginForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+
+                const res = await fetch('http://localhost:4001/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+                console.log('Login response:', data);
+
+                if (res.ok) {
+                    // Store user data in localStorage consistently
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('userId', data.user.id || data.user._id);
+                    localStorage.setItem('userEmail', data.user.email);
+                    localStorage.setItem('userName', data.user.username || data.user.fullName);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    // Verify stored data
+                    console.log('Stored auth data:', {
+                        token: localStorage.getItem('token'),
+                        userId: localStorage.getItem('userId'),
+                        userName: localStorage.getItem('userName')
+                    });
+
+                    // Show success message
+                    successMessage.textContent = 'Login successful! Redirecting...';
+                    successMessage.style.display = 'block';
+
+                    // Get redirect URL or default to index.html
+                    const redirectUrl = sessionStorage.getItem('redirectUrl') || 'index.html';
+                    sessionStorage.removeItem('redirectUrl');
+
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        window.location.href = redirectUrl;
+                    }, 1500);
+                } else {
+                    // Show error message
+                    errorMessage.textContent = data.message || 'Login failed. Please try again.';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (err) {
+                console.error('Login error:', err);
+                errorMessage.textContent = 'Server error. Please try again later.';
+                errorMessage.style.display = 'block';
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Login';
+            }
+        });
+
+        // SIGNUP API CALL
+        document.querySelector('#signup-form button[type="submit"]').addEventListener('click', async (e) => {
+            e.preventDefault();
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            const username = document.getElementById('signup-username').value.trim();
+            const fullName = document.getElementById('signup-fullname').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+            const phoneNumber = document.getElementById('signup-phone').value.trim();
+
+            const city = document.getElementById('signup-city').value.trim();
+            const state = document.getElementById('signup-state').value.trim();
+            const zipCode = document.getElementById('signup-zip').value.trim();
+            const country = document.getElementById('signup-country').value.trim();
+
+            // Validate email format
+            if (!isValidGmail(email)) {
+                errorMessage.textContent = 'Please enter a valid Gmail address with allowed characters (a-z, A-Z, 0-9, !#$%&\'*+-/=?^_`{|}~.)';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Validate phone number (exactly 10 digits)
+            if (!isValidPhoneNumber(phoneNumber)) {
+                errorMessage.textContent = 'Phone number must be exactly 10 digits';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Validate ZIP code
+            if (!isValidZipCode(zipCode)) {
+                errorMessage.textContent = 'ZIP code must be exactly 6 digits';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Validate city input
+            if (!city) {
+                errorMessage.textContent = 'Please enter a city name';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            if (!isValidCity(city, state)) {
+                errorMessage.textContent = 'Please enter a valid city name from ' + state;
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Validate state selection
+            if (!state) {
+                errorMessage.textContent = 'Please select a state';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Validate country selection
+            if (!country) {
+                errorMessage.textContent = 'Please select a country';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Check if email already exists
+            try {
+                const emailCheckResponse = await fetch('http://localhost:4001/api/auth/check-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+
+                const emailCheckData = await emailCheckResponse.json();
+
+                if (emailCheckResponse.ok && emailCheckData.exists) {
+                    errorMessage.textContent = 'This email is already registered. Please use a different email or try logging in.';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+            } catch (error) {
+                console.error('Error checking email:', error);
+                // Continue with signup if email check fails
+            }
+
+            try {
+                const submitButton = signupForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
+                const res = await fetch('http://localhost:4001/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username,
+                        fullName,
+                        email,
+                        password,
+                        phoneNumber,
+                        address: { city, state, zipCode, country }
+                    })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    successMessage.textContent = 'Account created successfully! Please log in.';
+                    successMessage.style.display = 'block';
+                    signupForm.reset();
+
+                    // Switch to login form after successful signup
+                    setTimeout(() => {
+                        loginTab.click();
+                    }, 1500);
+                } else {
+                    errorMessage.textContent = (data.message ? data.message : 'Signup failed') + (data.error ? (': ' + data.error) : '');
+                    errorMessage.style.display = 'block';
+                }
+            } catch (err) {
+                errorMessage.textContent = 'Server error. Please try again.';
+                errorMessage.style.display = 'block';
+            } finally {
+                const submitButton = signupForm.querySelector('button[type="submit"]');
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Create Account';
+            }
+        });
+
+        // State to cities mapping
+        const stateCitiesMap = {
+            "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool", "Rajahmundry", "Tirupati", "Kadapa", "Anantapur", "Eluru"],
+            "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat", "Tezpur", "Bomdila", "Ziro", "Along", "Changlang", "Tezu", "Khonsa"],
+            "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon", "Tinsukia", "Tezpur", "Bongaigaon", "Karimganj", "Sivasagar"],
+            "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Purnia", "Darbhanga", "Bihar Sharif", "Arrah", "Begusarai", "Katihar"],
+            "Chhattisgarh": ["Raipur", "Bhilai", "Korba", "Bilaspur", "Durg", "Rajnandgaon", "Jagdalpur", "Raigarh", "Ambikapur", "Mahasamund"],
+            "Goa": ["Panaji", "Vasco da Gama", "Margao", "Mapusa", "Ponda", "Bicholim", "Curchorem", "Sanquelim", "Cuncolim", "Quepem"],
+            "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Jamnagar", "Junagadh", "Gandhinagar", "Anand", "Navsari"],
+            "Haryana": ["Faridabad", "Gurgaon", "Panipat", "Ambala", "Yamunanagar", "Rohtak", "Hisar", "Karnal", "Sonipat", "Panchkula"],
+            "Himachal Pradesh": ["Shimla", "Dharamshala", "Solan", "Mandi", "Palampur", "Baddi", "Nahan", "Paonta Sahib", "Sundarnagar", "Chamba"],
+            "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Deoghar", "Phusro", "Hazaribagh", "Giridih", "Ramgarh", "Medininagar"],
+            "Karnataka": ["Bangalore", "Mysore", "Hubli", "Mangalore", "Belgaum", "Gulbarga", "Davanagere", "Bellary", "Bijapur", "Shimoga"],
+            "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kollam", "Palakkad", "Alappuzha", "Malappuram", "Kannur", "Kasaragod"],
+            "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Jabalpur", "Ujjain", "Sagar", "Dewas", "Satna", "Ratlam", "Rewa"],
+            "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik", "Aurangabad", "Solapur", "Amravati", "Kolhapur", "Sangli"],
+            "Manipur": ["Imphal", "Thoubal", "Bishnupur", "Churachandpur", "Kakching", "Ukhrul", "Senapati", "Tamenglong", "Jiribam", "Kangpokpi"],
+            "Meghalaya": ["Shillong", "Tura", "Jowai", "Nongpoh", "Baghmara", "Ampati", "Resubelpara", "Mawkyrwat", "Williamnagar", "Khliehriat"],
+            "Mizoram": ["Aizawl", "Lunglei", "Saiha", "Champhai", "Kolasib", "Serchhip", "Lawngtlai", "Mamit", "Bairabi", "Vairengte"],
+            "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Tuensang", "Wokha", "Zunheboto", "Phek", "Kiphire", "Longleng", "Peren"],
+            "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Sambalpur", "Puri", "Balasore", "Bhadrak", "Baripada", "Jharsuguda"],
+            "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda", "Mohali", "Firozpur", "Batala", "Pathankot", "Moga"],
+            "Rajasthan": ["Jaipur", "Jodhpur", "Kota", "Bikaner", "Ajmer", "Udaipur", "Bhilwara", "Alwar", "Bharatpur", "Sikar"],
+            "Sikkim": ["Gangtok", "Namchi", "Geyzing", "Mangan", "Jorethang", "Nayabazar", "Rangpo", "Singtam", "Pakyong", "Ravangla"],
+            "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Tirunelveli", "Tiruppur", "Vellore", "Erode", "Thoothukkudi"],
+            "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Khammam", "Karimnagar", "Ramagundam", "Mahbubnagar", "Nalgonda", "Adilabad", "Suryapet"],
+            "Tripura": ["Agartala", "Dharmanagar", "Udaipur", "Kailasahar", "Belonia", "Khowai", "Ambassa", "Ranir Bazar", "Sonamura", "Kumarghat"],
+            "Uttar Pradesh": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Varanasi", "Meerut", "Allahabad", "Bareilly", "Aligarh", "Moradabad"],
+            "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Haldwani", "Rudrapur", "Kashipur", "Rishikesh", "Kotdwar", "Pithoragarh", "Almora"],
+            "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Asansol", "Siliguri", "Bardhaman", "Malda", "Baharampur", "Habra", "Kharagpur"],
+            "Andaman and Nicobar Islands": ["Port Blair", "Bamboo Flat", "Garacharma", "Diglipur", "Mayabunder", "Rangat", "Campbell Bay", "Car Nicobar", "Hut Bay", "Nancowry"],
+            "Chandigarh": ["Chandigarh"],
+            "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Silvassa", "Dadra", "Nagar Haveli"],
+            "Delhi": ["New Delhi", "Delhi Cantonment", "Narela", "Najafgarh", "Alipur", "Mehrauli", "Karol Bagh", "Rohini", "Dwarka", "Vasant Kunj"],
+            "Jammu and Kashmir": ["Srinagar", "Jammu", "Baramulla", "Anantnag", "Sopore", "Kathua", "Udhampur", "Punch", "Rajouri", "Kupwara"],
+            "Ladakh": ["Leh", "Kargil", "Nubra", "Zanskar", "Changthang", "Sham", "Rupshu", "Dras", "Sankoo", "Turtuk"],
+            "Lakshadweep": ["Kavaratti", "Agatti", "Minicoy", "Amini", "Andrott", "Kalpeni", "Kadmat", "Kiltan", "Chetlat", "Bitra"],
+            "Puducherry": ["Puducherry", "Karaikal", "Mahe", "Yanam", "Villianur", "Ariyankuppam", "Bahour", "Nettapakkam", "Mannadipet", "Ozhukarai"]
+        };
+
+        // Validation functions
+        function isValidZipCode(zipCode) {
+            const zipRegex = /^\d{6}$/;
+            return zipRegex.test(zipCode);
+        }
+
+        // City validation function
+        function isValidCity(cityName, selectedState) {
+            if (!selectedState || !cityName) return false;
+            const cities = stateCitiesMap[selectedState] || [];
+            return cities.some(city => city.toLowerCase() === cityName.toLowerCase());
+        }
+
+        function isValidStreetAddress(street) {
+            const trimmedStreet = street.trim();
+
+            // Basic length check
+            if (trimmedStreet.length < 5) {
+                return false;
+            }
+
+            // Check for common invalid patterns
+            const invalidPatterns = [
+                /^[0-9]+$/, // Only numbers
+                /^[a-zA-Z]$/, // Single character
+                /^\s*$/, // Only whitespace
+                /^(.)\1{4,}$/ // Repeated characters (aaaaa)
+            ];
+
+            for (let pattern of invalidPatterns) {
+                if (pattern.test(trimmedStreet)) {
+                    return false;
+                }
+            }
+
+            // Must contain at least one letter
+            if (!/[a-zA-Z]/.test(trimmedStreet)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        // Street address suggestions based on city/state (same as index.html)
+        const streetSuggestions = {
+            // Maharashtra
+            "Mumbai": ["Linking Road, Bandra", "Carter Road, Bandra", "Marine Drive", "Colaba Causeway", "Juhu Beach Road", "Andheri East", "Powai", "Worli Sea Face", "Nariman Point", "Fort"],
+            "Pune": ["FC Road", "MG Road", "JM Road", "Koregaon Park", "Hinjewadi", "Baner Road", "Aundh", "Viman Nagar", "Kothrud", "Deccan"],
+            "Nagpur": ["Civil Lines", "Dharampeth", "Sadar", "Sitabuldi", "Ramdaspeth", "Mahal", "Gandhibagh", "Bajaj Nagar", "Medical Square", "Wardha Road"],
+
+            // Karnataka
+            "Bangalore": ["Brigade Road", "Commercial Street", "Koramangala", "Indiranagar", "Whitefield", "Electronic City", "Jayanagar", "Malleshwaram", "Rajajinagar", "HSR Layout"],
+            "Mysore": ["Sayyaji Rao Road", "Ashoka Road", "JLB Road", "Kalidasa Road", "Vinoba Road", "Hunsur Road", "Bannur Road", "Bogadi Road", "Ring Road", "Lalitha Mahal Road"],
+
+            // Tamil Nadu
+            "Chennai": ["Anna Salai", "T Nagar", "Adyar", "Velachery", "OMR", "ECR", "Nungambakkam", "Mylapore", "Besant Nagar", "Alwarpet"],
+            "Coimbatore": ["RS Puram", "Race Course Road", "Avinashi Road", "Trichy Road", "Sathy Road", "Mettupalayam Road", "Pollachi Road", "Palakkad Road", "Brookefields", "Saibaba Colony"],
+
+            // Delhi
+            "New Delhi": ["Connaught Place", "Khan Market", "Lajpat Nagar", "Karol Bagh", "Rajouri Garden", "Saket", "Vasant Kunj", "Greater Kailash", "Defence Colony", "Lodi Road"],
+            "Delhi Cantonment": ["Dhaula Kuan", "Delhi Cantt", "Shankar Road", "Brar Square", "AFS Palam", "IGI Airport Road", "Mahipalpur", "Vasant Vihar", "RK Puram", "Munirka"],
+
+            // West Bengal
+            "Kolkata": ["Park Street", "Camac Street", "AJC Bose Road", "Rashbehari Avenue", "Gariahat Road", "Ballygunge", "Salt Lake", "New Town", "Howrah Bridge", "Esplanade"],
+
+            // Gujarat
+            "Ahmedabad": ["CG Road", "SG Highway", "Ashram Road", "Relief Road", "Law Garden", "Satellite", "Vastrapur", "Bopal", "Prahlad Nagar", "Navrangpura"],
+            "Surat": ["Ring Road", "City Light", "Adajan", "Vesu", "Pal", "Rander Road", "Udhna", "Katargam", "Piplod", "Althan"],
+
+            // Rajasthan
+            "Jaipur": ["MI Road", "Tonk Road", "Ajmer Road", "JLN Marg", "Malviya Nagar", "Vaishali Nagar", "C Scheme", "Bani Park", "Civil Lines", "Mansarovar"],
+            "Jodhpur": ["High Court Road", "Residency Road", "Circuit House Road", "Chopasni Road", "Pal Road", "Sardarpura", "Ratanada", "Shastri Nagar", "Paota", "Basni"],
+
+            // Haryana
+            "Gurgaon": ["MG Road", "Golf Course Road", "Sohna Road", "NH-8", "Cyber City", "DLF Phase 1", "Sector 14", "Udyog Vihar", "Huda City Centre", "Old Gurgaon"],
+            "Faridabad": ["Mathura Road", "Delhi-Mathura Road", "Sector 16", "NIT", "Old Faridabad", "Ballabgarh", "Sector 21", "NHPC Chowk", "Ajronda Chowk", "Neelam Chowk"],
+
+            // Uttar Pradesh
+            "Lucknow": ["Hazratganj", "Gomti Nagar", "Indira Nagar", "Aliganj", "Mahanagar", "Alambagh", "Chowk", "Aminabad", "Rajajipuram", "Vikas Nagar"],
+            "Kanpur": ["Mall Road", "Civil Lines", "Swaroop Nagar", "Kidwai Nagar", "Govind Nagar", "Kalyanpur", "Barra", "Kakadeo", "Panki", "Shyam Nagar"],
+
+            // Telangana
+            "Hyderabad": ["Banjara Hills", "Jubilee Hills", "HITEC City", "Gachibowli", "Kondapur", "Madhapur", "Begumpet", "Secunderabad", "Ameerpet", "Kukatpally"]
+        };
+
+        // Update city suggestions based on selected state
+        function updateCitiesAuth(selectedState) {
+            const cityInput = document.getElementById('signup-city');
+            const cityDatalist = document.getElementById('signup-city-suggestions');
+            const cities = stateCitiesMap[selectedState] || [];
+
+            // Clear existing suggestions
+            cityDatalist.innerHTML = '';
+
+            if (cities.length > 0) {
+                cityInput.disabled = false;
+                cityInput.placeholder = 'Enter City Name';
+
+                // Add all cities as suggestions
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    cityDatalist.appendChild(option);
+                });
+            } else {
+                cityInput.disabled = true;
+                cityInput.placeholder = 'No cities available';
+            }
+
+            // Clear city input when state changes
+            cityInput.value = '';
+        }
+
+        // Add event listener for state selection
+        document.getElementById('signup-state').addEventListener('change', function() {
+            updateCitiesAuth(this.value);
+        });
+
+        // Add event listener for city input validation
+        document.getElementById('signup-city').addEventListener('input', function() {
+            const selectedState = document.getElementById('signup-state').value;
+            const cityName = this.value.trim();
+
+            if (cityName && selectedState) {
+                const isValid = isValidCity(cityName, selectedState);
+
+                if (isValid) {
+                    this.style.borderColor = '#4caf50';
+                } else {
+                    this.style.borderColor = '#f44336';
+                }
+            }
+        });
+
+        // Add loading spinner style
+        const spinnerStyle = document.createElement('style');
+        spinnerStyle.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            .fa-spinner {
+                animation: spin 1s linear infinite;
+            }
+        `;
+        document.head.appendChild(spinnerStyle);
+    </script>
+</body>
+</html>
