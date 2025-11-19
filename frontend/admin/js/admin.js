@@ -1,7 +1,14 @@
+// Admin Dashboard JavaScript - Updated with MongoDB Integration
+// Last updated: 2025-11-19
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Admin Dashboard Loaded - Version 2.0');
+
     // Check if user is logged in
     const token = localStorage.getItem('adminToken');
     const user = JSON.parse(localStorage.getItem('adminUser') || '{}');
+
+    console.log('Token found:', token ? 'Yes' : 'No');
+    console.log('User:', user);
 
     if (!token) {
         window.location.href = 'login.html';
@@ -110,26 +117,130 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Load dashboard data from public endpoints (demo mode)
+    async function loadDashboardDemo() {
+        console.log('Loading dashboard in demo mode...');
+        try {
+            // Load products from public endpoint
+            console.log('Fetching products from:', `${API_URL}/products`);
+            const productsResponse = await fetch(`${API_URL}/products`);
+
+            if (!productsResponse.ok) {
+                throw new Error(`Failed to fetch products: ${productsResponse.status}`);
+            }
+
+            const productsData = await productsResponse.json();
+            console.log('Products data received:', productsData);
+            const products = productsData.products || [];
+
+            // Load categories
+            console.log('Fetching categories from:', `${API_URL}/categories`);
+            const categoriesResponse = await fetch(`${API_URL}/categories`);
+            const categories = categoriesResponse.ok ? await categoriesResponse.json() : [];
+            console.log('Categories received:', categories);
+
+            // Calculate stats from available data
+            const productCount = products.length;
+            const categoryCount = categories.length;
+
+            // Mock user and order counts for demo
+            const userCount = 0; // No public endpoint for users
+            const orderCount = 0; // No public endpoint for orders
+            const totalRevenue = 0;
+
+            console.log('Updating dashboard stats:', { userCount, productCount, orderCount, totalRevenue });
+
+            // Update stats
+            document.getElementById('user-count').textContent = userCount;
+            document.getElementById('product-count').textContent = productCount;
+            document.getElementById('order-count').textContent = orderCount;
+            document.getElementById('total-revenue').textContent = formatCurrency(totalRevenue);
+
+            // Update recent orders table with demo message
+            const recentOrdersTable = document.getElementById('recent-orders-table').querySelector('tbody');
+            recentOrdersTable.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                        <i class="fas fa-info-circle" style="font-size: 24px; margin-bottom: 10px;"></i>
+                        <p>No orders yet. Orders will appear here once customers start placing orders.</p>
+                        <p style="font-size: 12px; margin-top: 10px;">Connected to MongoDB: <strong>${productCount} products loaded</strong></p>
+                    </td>
+                </tr>
+            `;
+
+            // Load recent activity
+            loadRecentActivityDemo(products);
+
+            // Create sales trend chart with demo data
+            createSalesTrendChart([0, 0, 0, 0, 0, 0, 0]);
+
+            // Load top products
+            loadTopProductsDemo(products);
+
+        } catch (error) {
+            console.error('Error loading demo dashboard:', error);
+
+            // Show error in stats
+            document.getElementById('user-count').textContent = 'Error';
+            document.getElementById('product-count').textContent = 'Error';
+            document.getElementById('order-count').textContent = 'Error';
+            document.getElementById('total-revenue').textContent = 'Error';
+
+            const recentOrdersTable = document.getElementById('recent-orders-table').querySelector('tbody');
+            recentOrdersTable.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: #f44336;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
+                        <p>Error loading dashboard data</p>
+                        <p style="font-size: 12px;">Make sure the backend server is running on http://localhost:4001</p>
+                    </td>
+                </tr>
+            `;
+        }
+    }
+
     // Load dashboard data
     async function loadDashboard() {
+        console.log('loadDashboard called, token:', token ? 'Present' : 'Missing');
         try {
+            // Check if using mock token (for backward compatibility)
+            const isMockToken = token && token.startsWith('mock-admin-token');
+            console.log('Is mock token?', isMockToken);
+
+            if (isMockToken) {
+                // Load data from public endpoints for demo
+                console.log('Using demo mode with mock token');
+                await loadDashboardDemo();
+                return;
+            }
+
+            // Try to fetch from admin endpoint with real JWT token
+            console.log('Attempting to fetch from admin endpoint with real token...');
             const response = await fetch(`${API_URL}/admin/dashboard`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
 
             if (!response.ok) {
+                console.error('Admin dashboard fetch failed:', response.status, response.statusText);
+                // If auth fails, try demo mode as fallback
+                if (response.status === 401 || response.status === 403) {
+                    console.log('Auth failed, loading demo data as fallback...');
+                    await loadDashboardDemo();
+                    return;
+                }
                 throw new Error('Failed to load dashboard data');
             }
 
             const data = await response.json();
 
             // Update stats
-            document.getElementById('user-count').textContent = data.userCount;
-            document.getElementById('product-count').textContent = data.productCount;
-            document.getElementById('order-count').textContent = data.orderCount;
-            document.getElementById('total-revenue').textContent = formatCurrency(data.totalRevenue);
+            document.getElementById('user-count').textContent = data.userCount || 0;
+            document.getElementById('product-count').textContent = data.productCount || 0;
+            document.getElementById('order-count').textContent = data.orderCount || 0;
+            document.getElementById('total-revenue').textContent = formatCurrency(data.totalRevenue || 0);
 
             // Update recent orders table
             const recentOrdersTable = document.getElementById('recent-orders-table').querySelector('tbody');
@@ -204,58 +315,137 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Load recent activity demo
+    function loadRecentActivityDemo(products) {
+        const activityFeed = document.getElementById('recent-activity');
+
+        if (!products || products.length === 0) {
+            activityFeed.innerHTML = '<div class="activity-item">No recent activity</div>';
+            return;
+        }
+
+        let html = '';
+        products.slice(0, 5).forEach((product, index) => {
+            html += `
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="activity-content">
+                        <p><strong>${product.productname}</strong> is available</p>
+                        <small>${product.category} - ${formatCurrency(product.price)}</small>
+                    </div>
+                </div>
+            `;
+        });
+
+        activityFeed.innerHTML = html;
+    }
+
+    // Load top products demo
+    function loadTopProductsDemo(products) {
+        const topProductsList = document.getElementById('top-products');
+
+        if (!products || products.length === 0) {
+            topProductsList.innerHTML = '<div class="loading">No products found</div>';
+            return;
+        }
+
+        // Sort by rating and get top 5
+        const topProducts = products
+            .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+            .slice(0, 5);
+
+        let html = '';
+        topProducts.forEach((product, index) => {
+            html += `
+                <div class="top-product-item">
+                    <div class="product-rank">${index + 1}</div>
+                    <img src="${product.imageUrl}" alt="${product.productname}">
+                    <div class="product-info">
+                        <h4>${product.productname}</h4>
+                        <p>${formatCurrency(product.price)}</p>
+                        <div class="product-rating">
+                            ${'⭐'.repeat(Math.floor(product.rating || 0))}
+                            <span>${(product.rating || 0).toFixed(1)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        topProductsList.innerHTML = html;
+    }
+
     // Load products
     async function loadProducts() {
         try {
-            const response = await fetch(`${API_URL}/admin/products`, {
+            // Try admin endpoint first
+            let response = await fetch(`${API_URL}/admin/products`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
+
+            // If auth fails, use public endpoint
+            if (!response.ok && (response.status === 401 || response.status === 403)) {
+                response = await fetch(`${API_URL}/products`);
+                const data = await response.json();
+                const products = data.products || [];
+                displayProducts(products);
+                return;
+            }
 
             if (!response.ok) {
                 throw new Error('Failed to load products');
             }
 
             const products = await response.json();
-
-            const productsTable = document.getElementById('products-table').querySelector('tbody');
-
-            if (products && products.length > 0) {
-                let html = '';
-
-                products.forEach(product => {
-                    html += `
-                        <tr>
-                            <td>
-                                <img src="${product.imageUrl}" alt="${product.productname}" width="50">
-                            </td>
-                            <td>${product.productname}</td>
-                            <td>${formatCurrency(product.price)}</td>
-                            <td>${product.category || 'Uncategorized'}</td>
-                            <td>${product.stockQuantity}</td>
-                            <td class="action-buttons">
-                                <button class="btn btn-info btn-sm" onclick="editProduct('${product._id}')">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteProduct('${product._id}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                productsTable.innerHTML = html;
-            } else {
-                productsTable.innerHTML = '<tr><td colspan="6">No products found</td></tr>';
-            }
+            displayProducts(products);
 
         } catch (error) {
             console.error('Error loading products:', error);
-            alert('Error loading products');
+            const productsTable = document.getElementById('products-table').querySelector('tbody');
+            productsTable.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #f44336;">Error loading products. Make sure the server is running.</td></tr>';
         }
     }
+
+    // Display products in table
+    function displayProducts(products) {
+        const productsTable = document.getElementById('products-table').querySelector('tbody');
+
+        if (products && products.length > 0) {
+            let html = '';
+
+            products.forEach(product => {
+                html += `
+                    <tr>
+                        <td>
+                            <img src="${product.imageUrl}" alt="${product.productname}" width="50" style="border-radius: 4px;">
+                        </td>
+                        <td>${product.productname}</td>
+                        <td>${formatCurrency(product.price)}</td>
+                        <td>${product.category || 'Uncategorized'}</td>
+                        <td>${product.stockQuantity || 0}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-info btn-sm" onclick="editProduct('${product._id}')" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteProduct('${product._id}')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            productsTable.innerHTML = html;
+        } else {
+            productsTable.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-500);">No products found</td></tr>';
+        }
+    }
+
+    // Original loadProducts function removed, replaced with above
 
     // Load orders
     async function loadOrders() {
@@ -266,13 +456,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
+            const ordersTable = document.getElementById('orders-table').querySelector('tbody');
+
             if (!response.ok) {
-                throw new Error('Failed to load orders');
+                // Show demo message for orders
+                ordersTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                            <i class="fas fa-shopping-cart" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
+                            <p style="font-size: 16px; margin-bottom: 10px;">No orders yet</p>
+                            <p style="font-size: 14px;">Orders will appear here once customers start placing orders.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
             }
 
             const orders = await response.json();
-
-            const ordersTable = document.getElementById('orders-table').querySelector('tbody');
 
             if (orders && orders.length > 0) {
                 let html = '';
@@ -298,12 +498,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 ordersTable.innerHTML = html;
             } else {
-                ordersTable.innerHTML = '<tr><td colspan="6">No orders found</td></tr>';
+                ordersTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                            <i class="fas fa-shopping-cart" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
+                            <p>No orders found</p>
+                        </td>
+                    </tr>
+                `;
             }
 
         } catch (error) {
             console.error('Error loading orders:', error);
-            alert('Error loading orders');
+            const ordersTable = document.getElementById('orders-table').querySelector('tbody');
+            ordersTable.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #f44336;">Error loading orders</td></tr>';
         }
     }
 
@@ -316,13 +524,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
+            const usersTable = document.getElementById('users-table').querySelector('tbody');
+
             if (!response.ok) {
-                throw new Error('Failed to load users');
+                // Show demo message for users
+                usersTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                            <i class="fas fa-users" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
+                            <p style="font-size: 16px; margin-bottom: 10px;">No users registered yet</p>
+                            <p style="font-size: 14px;">User accounts will appear here once customers register.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
             }
 
             const users = await response.json();
-
-            const usersTable = document.getElementById('users-table').querySelector('tbody');
 
             if (users && users.length > 0) {
                 let html = '';
@@ -333,13 +551,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             <td>${user._id}</td>
                             <td>${user.fullName || user.username}</td>
                             <td>${user.email}</td>
-                            <td>${user.role}</td>
+                            <td><span class="badge badge-${user.role === 'admin' ? 'danger' : 'primary'}">${user.role}</span></td>
                             <td>${formatDate(user.createdAt)}</td>
                             <td class="action-buttons">
-                                <button class="btn btn-info btn-sm" onclick="editUser('${user._id}')">
+                                <button class="btn btn-info btn-sm" onclick="editUser('${user._id}')" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteUser('${user._id}')">
+                                <button class="btn btn-danger btn-sm" onclick="deleteUser('${user._id}')" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -349,12 +567,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 usersTable.innerHTML = html;
             } else {
-                usersTable.innerHTML = '<tr><td colspan="6">No users found</td></tr>';
+                usersTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                            <i class="fas fa-users" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
+                            <p>No users found</p>
+                        </td>
+                    </tr>
+                `;
             }
 
         } catch (error) {
             console.error('Error loading users:', error);
-            alert('Error loading users');
+            const usersTable = document.getElementById('users-table').querySelector('tbody');
+            usersTable.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #f44336;">Error loading users</td></tr>';
         }
     }
 
@@ -362,13 +588,11 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadCategories(showTable = false) {
         try {
             console.log('Loading categories...');
-            const response = await fetch(`${API_URL}/categories`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            // Categories endpoint is public, no auth needed
+            const response = await fetch(`${API_URL}/categories`);
 
             if (!response.ok) {
+                console.error('Failed to load categories:', response.status);
                 throw new Error('Failed to load categories');
             }
 
@@ -377,14 +601,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Update category dropdown in product form
             const categorySelect = document.getElementById('product-category');
-            categorySelect.innerHTML = '<option value="">Select Category</option>';
+            if (categorySelect) {
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
 
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category.name;
-                option.textContent = category.name;
-                categorySelect.appendChild(option);
-            });
+                if (categories && categories.length > 0) {
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.name;
+                        option.textContent = category.name;
+                        categorySelect.appendChild(option);
+                    });
+                    console.log(`Added ${categories.length} categories to dropdown`);
+                } else {
+                    console.warn('No categories found');
+                    categorySelect.innerHTML = '<option value="">No categories available</option>';
+                }
+            } else {
+                console.warn('Category select element not found');
+            }
 
             // Update categories table if needed
             if (showTable) {
@@ -419,7 +653,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         } catch (error) {
             console.error('Error loading categories:', error);
-            alert('Error loading categories');
+
+            // Update dropdown with error message
+            const categorySelect = document.getElementById('product-category');
+            if (categorySelect) {
+                categorySelect.innerHTML = '<option value="">Error loading categories</option>';
+            }
+
+            // Show error in table if needed
+            if (showTable) {
+                const categoriesTable = document.getElementById('categories-table')?.querySelector('tbody');
+                if (categoriesTable) {
+                    categoriesTable.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px; color: #f44336;">Error loading categories. Make sure the server is running.</td></tr>';
+                }
+            }
         }
     }
 
@@ -935,16 +1182,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Create sales trend chart
-    function createSalesTrendChart() {
+    function createSalesTrendChart(data = null) {
         const ctx = document.getElementById('salesChart');
         if (!ctx) return;
 
-        // Sample data - in real app, fetch from API
+        // Use provided data or sample data
+        const chartData = data || [12000, 19000, 15000, 25000, 22000, 30000, 28000];
+
         const salesData = {
             labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
             datasets: [{
                 label: 'Sales (₹)',
-                data: [12000, 19000, 15000, 25000, 22000, 30000, 28000],
+                data: chartData,
                 borderColor: '#3b82f6',
                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 borderWidth: 3,

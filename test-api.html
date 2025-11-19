@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Tester - Electronics Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .endpoint-section {
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .endpoint-header {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .endpoint-header h2 {
+            color: #495057;
+            font-size: 1.2em;
+        }
+        .endpoint-body {
+            padding: 20px;
+        }
+        .endpoint-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-right: 10px;
+        }
+        .method.get { background: #28a745; color: white; }
+        .method.post { background: #007bff; color: white; }
+        .method.put { background: #ffc107; color: black; }
+        .method.delete { background: #dc3545; color: white; }
+        .endpoint-url {
+            font-family: 'Courier New', monospace;
+            color: #495057;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .response {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f1f3f5;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .response pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 API Tester - Electronics Store</h1>
+        <p class="subtitle">Test your MongoDB-connected API endpoints</p>
+        
+        <div id="connectionStatus" class="status info">
+            Checking server connection...
+        </div>
+
+        <div class="endpoint-section">
+            <div class="endpoint-header">
+                <h2>📦 Products API</h2>
+            </div>
+            <div class="endpoint-body">
+                <div class="endpoint-item">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-url">/api/products</span>
+                    <button onclick="testEndpoint('GET', '/api/products', 'products-all')">Test</button>
+                    <div id="products-all" class="response" style="display:none;"></div>
+                </div>
+                
+                <div class="endpoint-item">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-url">/api/products/category/Laptops</span>
+                    <button onclick="testEndpoint('GET', '/api/products/category/Laptops', 'products-category')">Test</button>
+                    <div id="products-category" class="response" style="display:none;"></div>
+                </div>
+                
+                <div class="endpoint-item">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-url">/api/products/search?query=laptop</span>
+                    <button onclick="testEndpoint('GET', '/api/products/search?query=laptop', 'products-search')">Test</button>
+                    <div id="products-search" class="response" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint-section">
+            <div class="endpoint-header">
+                <h2>📂 Categories API</h2>
+            </div>
+            <div class="endpoint-body">
+                <div class="endpoint-item">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-url">/api/categories</span>
+                    <button onclick="testEndpoint('GET', '/api/categories', 'categories-all')">Test</button>
+                    <div id="categories-all" class="response" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint-section">
+            <div class="endpoint-header">
+                <h2>🏠 Home & About API</h2>
+            </div>
+            <div class="endpoint-body">
+                <div class="endpoint-item">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-url">/api/home</span>
+                    <button onclick="testEndpoint('GET', '/api/home', 'home')">Test</button>
+                    <div id="home" class="response" style="display:none;"></div>
+                </div>
+                
+                <div class="endpoint-item">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-url">/api/about</span>
+                    <button onclick="testEndpoint('GET', '/api/about', 'about')">Test</button>
+                    <div id="about" class="response" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:4001';
+
+        // Check server connection on load
+        window.addEventListener('load', checkConnection);
+
+        async function checkConnection() {
+            const statusDiv = document.getElementById('connectionStatus');
+            try {
+                const response = await fetch(`${API_URL}/`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML = '✅ Server is running! MongoDB connection active.';
+                } else {
+                    throw new Error('Server responded with error');
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '❌ Cannot connect to server. Make sure:<br>1. MongoDB is running<br>2. Backend server is started (node backend/server.js)';
+            }
+        }
+
+        async function testEndpoint(method, endpoint, responseId) {
+            const responseDiv = document.getElementById(responseId);
+            const button = event.target;
+            
+            button.disabled = true;
+            button.innerHTML = 'Testing... <span class="loading"></span>';
+            responseDiv.style.display = 'block';
+            responseDiv.innerHTML = '<p>Loading...</p>';
+
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                responseDiv.innerHTML = `
+                    <strong>Status:</strong> ${response.status} ${response.statusText}<br>
+                    <strong>Response:</strong>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                responseDiv.innerHTML = `
+                    <strong style="color: red;">Error:</strong>
+                    <pre>${error.message}</pre>
+                `;
+            } finally {
+                button.disabled = false;
+                button.innerHTML = 'Test';
+            }
+        }
+    </script>
+</body>
+</html>
+

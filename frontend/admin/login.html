@@ -473,35 +473,8 @@
                 }
 
                 try {
-                    // Check for demo admin credentials
-                    if (email === 'admin@example.com' && password === 'admin123') {
-                        // Mock successful admin login
-                        const mockAdminData = {
-                            token: 'mock-admin-token-' + Date.now(),
-                            user: {
-                                id: 'admin-001',
-                                username: 'admin',
-                                fullName: 'System Administrator',
-                                email: 'admin@example.com',
-                                role: 'admin'
-                            }
-                        };
-
-                        // Store token and user info
-                        localStorage.setItem('adminToken', mockAdminData.token);
-                        localStorage.setItem('adminUser', JSON.stringify(mockAdminData.user));
-
-                        // Show success message
-                        showAlert('Login successful! Redirecting to admin dashboard...', 'success');
-
-                        // Redirect to admin dashboard
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1500);
-                        return;
-                    }
-
-                    // Try real API call
+                    // Try real API call first
+                    console.log('Attempting login with real API...');
                     const response = await fetch('http://localhost:4001/api/auth/login', {
                         method: 'POST',
                         headers: {
@@ -516,9 +489,11 @@
                         throw new Error(data.message || 'Login failed');
                     }
 
+                    console.log('Login response:', data);
+
                     // Check if user is admin
                     if (data.user.role !== 'admin') {
-                        showAlert('You do not have admin privileges', 'error');
+                        showAlert('Access denied. Admin privileges required.', 'error');
                         return;
                     }
 
@@ -526,44 +501,19 @@
                     localStorage.setItem('adminToken', data.token);
                     localStorage.setItem('adminUser', JSON.stringify(data.user));
 
+                    console.log('Admin login successful, token stored');
+
                     // Show success message
-                    showAlert('Login successful! Redirecting...', 'success');
+                    showAlert('Login successful! Redirecting to admin dashboard...', 'success');
 
                     // Redirect to admin dashboard
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
-                    }, 1000);
+                    }, 1500);
 
                 } catch (error) {
-                    // If API fails, check for demo credentials
-                    if (email === 'admin@example.com' && password === 'admin123') {
-                        // Mock successful admin login
-                        const mockAdminData = {
-                            token: 'mock-admin-token-' + Date.now(),
-                            user: {
-                                id: 'admin-001',
-                                username: 'admin',
-                                fullName: 'System Administrator',
-                                email: 'admin@example.com',
-                                role: 'admin'
-                            }
-                        };
-
-                        // Store token and user info
-                        localStorage.setItem('adminToken', mockAdminData.token);
-                        localStorage.setItem('adminUser', JSON.stringify(mockAdminData.user));
-
-                        // Show success message
-                        showAlert('Login successful! (Demo Mode) Redirecting...', 'success');
-
-                        // Redirect to admin dashboard
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1500);
-                        return;
-                    }
-
-                    showAlert(error.message || 'Login failed. Please check your credentials.', 'error');
+                    console.error('Login error:', error);
+                    showAlert(error.message || 'Login failed. Please check your credentials and make sure the server is running.', 'error');
                 }
             });
 
